@@ -1,0 +1,221 @@
+<div class="event-attendance-container">
+  <!-- Header -->
+  <mat-toolbar color="primary">
+    <button mat-icon-button (click)="goBack()" matTooltip="Quay lại">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="title">Điểm danh - {{ event?.name }}</span>
+    <span class="spacer"></span>
+    <button mat-raised-button color="accent" (click)="exportAttendance()" *ngIf="!isLoading">
+      <mat-icon>download</mat-icon>
+      Xuất CSV
+    </button>
+  </mat-toolbar>
+
+  <div class="content-container">
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Đang tải dữ liệu điểm danh...</p>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="!isLoading && event" class="attendance-content">
+      <!-- Statistics Cards -->
+      <div class="stats-grid">
+        <mat-card class="stat-card total">
+          <mat-card-content>
+            <div class="stat-icon">
+              <mat-icon>group</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ getTotalCount() }}</div>
+              <div class="stat-label">Tổng số</div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card present">
+          <mat-card-content>
+            <div class="stat-icon">
+              <mat-icon>check_circle</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ getPresentCount() }}</div>
+              <div class="stat-label">Có mặt</div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card late">
+          <mat-card-content>
+            <div class="stat-icon">
+              <mat-icon>schedule</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ getLateCount() }}</div>
+              <div class="stat-label">Muộn</div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card pending">
+          <mat-card-content>
+            <div class="stat-icon">
+              <mat-icon>pending</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ getPendingCount() }}</div>
+              <div class="stat-label">Chờ xác nhận</div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="stat-card rate">
+          <mat-card-content>
+            <div class="stat-icon">
+              <mat-icon>trending_up</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ getAttendanceRate() }}%</div>
+              <div class="stat-label">Tỷ lệ tham gia</div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Filters -->
+      <mat-card class="filters-card">
+        <mat-card-content>
+          <div class="filters-row">
+            <mat-form-field appearance="outline" class="search-field">
+              <mat-label>Tìm kiếm</mat-label>
+              <input matInput [(ngModel)]="searchText" (ngModelChange)="onSearchChange()" 
+                     placeholder="Tên người tham gia...">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Trạng thái</mat-label>
+              <mat-select [(value)]="statusFilter" (selectionChange)="onStatusFilterChange()">
+                <mat-option *ngFor="let option of statusOptions" [value]="option.value">
+                  {{ option.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="filter-field">
+              <mat-label>Phương thức</mat-label>
+              <mat-select [(value)]="methodFilter" (selectionChange)="onMethodFilterChange()">
+                <mat-option *ngFor="let option of methodOptions" [value]="option.value">
+                  {{ option.label }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div class="results-info">
+              <span class="results-count">
+                {{ filteredRecords.length }} / {{ attendanceRecords.length }} bản ghi
+              </span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Attendance Table -->
+      <mat-card class="table-card">
+        <mat-card-content>
+          <div *ngIf="filteredRecords.length === 0" class="no-data">
+            <mat-icon class="no-data-icon">search_off</mat-icon>
+            <h3>Không có dữ liệu</h3>
+            <p>Không tìm thấy bản ghi điểm danh nào phù hợp với bộ lọc.</p>
+            <button mat-button (click)="searchText = ''; statusFilter = ''; methodFilter = ''; applyFilters()">
+              Xóa bộ lọc
+            </button>
+          </div>
+
+          <div *ngIf="filteredRecords.length > 0" class="table-container">
+            <table mat-table [dataSource]="filteredRecords" class="attendance-table">
+              <!-- User Name Column -->
+              <ng-container matColumnDef="userName">
+                <th mat-header-cell *matHeaderCellDef>Họ tên</th>
+                <td mat-cell *matCellDef="let record">
+                  <div class="user-cell">
+                    <mat-icon class="user-icon">person</mat-icon>
+                    <span>{{ record.userName || 'Không xác định' }}</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Status Column -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Trạng thái</th>
+                <td mat-cell *matCellDef="let record">
+                  <mat-chip [color]="getStatusColor(record.status)" selected>
+                    {{ getStatusLabel(record.status) }}
+                  </mat-chip>
+                </td>
+              </ng-container>
+
+              <!-- Check-in Method Column -->
+              <ng-container matColumnDef="checkInMethod">
+                <th mat-header-cell *matHeaderCellDef>Phương thức</th>
+                <td mat-cell *matCellDef="let record">
+                  <div class="method-cell">
+                    <mat-icon class="method-icon">{{ getMethodIcon(record.checkInMethod) }}</mat-icon>
+                    <span>{{ getMethodLabel(record.checkInMethod) }}</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Timestamp Column -->
+              <ng-container matColumnDef="timestamp">
+                <th mat-header-cell *matHeaderCellDef>Thời gian</th>
+                <td mat-cell *matCellDef="let record">
+                  <div class="timestamp-cell">
+                    <mat-icon class="time-icon">access_time</mat-icon>
+                    <span>{{ formatDateTime(record.timestamp) }}</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Location Column -->
+              <ng-container matColumnDef="location">
+                <th mat-header-cell *matHeaderCellDef>Vị trí</th>
+                <td mat-cell *matCellDef="let record">
+                  <div class="location-cell" *ngIf="record.gpsAccuracyMeters !== undefined">
+                    <mat-icon class="location-icon">gps_fixed</mat-icon>
+                    <span>{{ record.gpsAccuracyMeters }}m</span>
+                  </div>
+                  <div class="location-cell" *ngIf="record.gpsAccuracyMeters === undefined">
+                    <mat-icon class="location-icon">location_off</mat-icon>
+                    <span>N/A</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                  class="attendance-row"
+                  [ngClass]="{
+                    'present': row.status === 'Present',
+                    'late': row.status === 'Late',
+                    'pending': row.status === 'PendingVerification'
+                  }"></tr>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!isLoading && !event" class="error-state">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3>Không tìm thấy sự kiện</h3>
+      <p>Sự kiện không tồn tại hoặc bạn không có quyền truy cập.</p>
+      <button mat-raised-button color="primary" (click)="goBack()">
+        Quay lại
+      </button>
+    </div>
+  </div>
+</div>

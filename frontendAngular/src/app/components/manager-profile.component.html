@@ -1,0 +1,183 @@
+<div class="manager-profile-container">
+  <!-- Header Toolbar -->
+  <mat-toolbar color="primary">
+    <button mat-icon-button (click)="goBack()" matTooltip="Quay lại">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="title">Thông tin tài khoản</span>
+    <span class="spacer"></span>
+  </mat-toolbar>
+
+  <div class="content-container">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Đang tải thông tin tài khoản...</p>
+    </div>
+
+    <!-- Profile Content -->
+    <div *ngIf="!isLoading" class="profile-content">
+      <!-- Profile Header Card -->
+      <mat-card class="profile-header-card">
+        <mat-card-content>
+          <div class="profile-header">
+            <div class="avatar-section">
+              <div class="avatar">
+                <mat-icon class="avatar-icon">account_circle</mat-icon>
+              </div>
+              <div class="user-basic-info">
+                <h2 class="user-name">{{ getDisplayName() }}</h2>
+                <p class="user-role">{{ getDisplayRole() }}</p>
+                <p class="user-email">{{ getDisplayEmail() }}</p>
+              </div>
+            </div>
+            <div class="header-actions">
+              <button mat-raised-button 
+                      [color]="isEditing ? 'warn' : 'primary'"
+                      (click)="toggleEdit()"
+                      [disabled]="isSaving">
+                <mat-icon>{{ isEditing ? 'cancel' : 'edit' }}</mat-icon>
+                {{ isEditing ? 'Hủy' : 'Chỉnh sửa' }}
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Profile Details Card -->
+      <mat-card class="profile-details-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>person</mat-icon>
+            Chi tiết thông tin
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+            <div class="form-grid">
+              <!-- Username -->
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Tên đăng nhập</mat-label>
+                <input matInput 
+                       formControlName="username"
+                       [readonly]="!isEditing"
+                       placeholder="Nhập tên đăng nhập">
+                <mat-icon matSuffix>person</mat-icon>
+                <mat-error>{{ getFieldError('username') }}</mat-error>
+              </mat-form-field>
+
+              <!-- Email -->
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Email</mat-label>
+                <input matInput 
+                       type="email"
+                       formControlName="email"
+                       [readonly]="!isEditing"
+                       placeholder="Nhập địa chỉ email">
+                <mat-icon matSuffix>email</mat-icon>
+                <mat-error>{{ getFieldError('email') }}</mat-error>
+              </mat-form-field>
+
+              <!-- Full Name -->
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Họ và tên</mat-label>
+                <input matInput 
+                       formControlName="fullName"
+                       [readonly]="!isEditing"
+                       placeholder="Nhập họ và tên đầy đủ">
+                <mat-icon matSuffix>badge</mat-icon>
+                <mat-error>{{ getFieldError('fullName') }}</mat-error>
+              </mat-form-field>
+
+              <!-- Phone Number -->
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Số điện thoại</mat-label>
+                <input matInput 
+                       formControlName="phoneNumber"
+                       [readonly]="!isEditing"
+                       placeholder="Nhập số điện thoại">
+                <mat-icon matSuffix>phone</mat-icon>
+                <mat-error>{{ getFieldError('phoneNumber') }}</mat-error>
+              </mat-form-field>
+
+              <!-- Role (Read-only) -->
+              <mat-form-field appearance="outline" class="form-field">
+                <mat-label>Vai trò</mat-label>
+                <input matInput 
+                       formControlName="role"
+                       readonly
+                       placeholder="Vai trò trong hệ thống">
+                <mat-icon matSuffix>admin_panel_settings</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <!-- Save Button (only show when editing) -->
+            <div *ngIf="isEditing" class="form-actions">
+              <button mat-raised-button 
+                      color="primary" 
+                      type="submit"
+                      [disabled]="profileForm.invalid || isSaving">
+                <mat-icon>save</mat-icon>
+                <span *ngIf="!isSaving">Lưu thay đổi</span>
+                <span *ngIf="isSaving">Đang lưu...</span>
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Account Info Card -->
+      <mat-card class="account-info-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>info</mat-icon>
+            Thông tin tài khoản
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-grid">
+            <div class="info-item">
+              <mat-icon class="info-icon">verified_user</mat-icon>
+              <div class="info-content">
+                <div class="info-label">Trạng thái tài khoản</div>
+                <div class="info-value">
+                  <mat-icon class="status-icon active">check_circle</mat-icon>
+                  Đang hoạt động
+                </div>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon class="info-icon">email</mat-icon>
+              <div class="info-content">
+                <div class="info-label">Xác thực email</div>
+                <div class="info-value">
+                  <mat-icon [class]="currentUser?.emailVerified ? 'status-icon verified' : 'status-icon unverified'">
+                    {{ currentUser?.emailVerified ? 'verified' : 'warning' }}
+                  </mat-icon>
+                  {{ currentUser?.emailVerified ? 'Đã xác thực' : 'Chưa xác thực' }}
+                </div>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon class="info-icon">schedule</mat-icon>
+              <div class="info-content">
+                <div class="info-label">Lần đăng nhập cuối</div>
+                <div class="info-value">{{ formatDate(currentUser?.lastLoginAt) }}</div>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon class="info-icon">today</mat-icon>
+              <div class="info-content">
+                <div class="info-label">Ngày tạo tài khoản</div>
+                <div class="info-value">{{ formatDate(currentUser?.createdAt) }}</div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

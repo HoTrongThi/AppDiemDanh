@@ -1,0 +1,330 @@
+.event-attendance-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.content-container {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  background-color: #f5f5f5;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 16px;
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 16px;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #f44336;
+}
+
+.attendance-content {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Statistics Cards */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+}
+
+.stat-card mat-card-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+}
+
+.stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  color: white;
+}
+
+.stat-card.total .stat-icon {
+  background-color: #2196f3;
+}
+
+.stat-card.present .stat-icon {
+  background-color: #4caf50;
+}
+
+.stat-card.late .stat-icon {
+  background-color: #ff9800;
+}
+
+.stat-card.pending .stat-icon {
+  background-color: #9c27b0;
+}
+
+.stat-card.rate .stat-icon {
+  background-color: #607d8b;
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #333;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Filters */
+.filters-card {
+  margin-bottom: 24px;
+}
+
+.filters-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 16px;
+  align-items: center;
+}
+
+.search-field {
+  min-width: 300px;
+}
+
+.filter-field {
+  min-width: 150px;
+}
+
+.results-info {
+  text-align: right;
+}
+
+.results-count {
+  font-size: 0.875rem;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Table */
+.table-card {
+  margin-bottom: 24px;
+}
+
+.no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  text-align: center;
+}
+
+.no-data-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #9e9e9e;
+  margin-bottom: 16px;
+}
+
+.no-data h3 {
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.no-data p {
+  margin: 0 0 16px 0;
+  color: #666;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.attendance-table {
+  width: 100%;
+}
+
+.attendance-table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.attendance-row {
+  transition: background-color 0.2s ease;
+}
+
+.attendance-row:hover {
+  background-color: #f9f9f9;
+}
+
+.attendance-row.present {
+  border-left: 4px solid #4caf50;
+}
+
+.attendance-row.late {
+  border-left: 4px solid #ff9800;
+}
+
+.attendance-row.pending {
+  border-left: 4px solid #9c27b0;
+}
+
+/* Table Cell Styles */
+.user-cell, .method-cell, .timestamp-cell, .location-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-icon, .method-icon, .time-icon, .location-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #666;
+}
+
+.user-cell .user-icon {
+  color: #1976d2;
+}
+
+.method-cell .method-icon {
+  color: #4caf50;
+}
+
+.timestamp-cell .time-icon {
+  color: #ff9800;
+}
+
+.location-cell .location-icon {
+  color: #9c27b0;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .stats-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .content-container {
+    padding: 16px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .stat-card mat-card-content {
+    padding: 16px;
+  }
+  
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .filters-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .search-field, .filter-field {
+    min-width: unset;
+    width: 100%;
+  }
+  
+  .results-info {
+    text-align: left;
+  }
+  
+  .attendance-table {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-card mat-card-content {
+    padding: 12px;
+  }
+  
+  .stat-icon {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .stat-number {
+    font-size: 1.3rem;
+  }
+  
+  .attendance-table {
+    font-size: 0.8rem;
+  }
+  
+  .user-cell, .method-cell, .timestamp-cell, .location-cell {
+    gap: 4px;
+  }
+  
+  .user-icon, .method-icon, .time-icon, .location-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}

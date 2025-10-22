@@ -1,0 +1,179 @@
+<div class="event-edit-container">
+  <!-- Header -->
+  <mat-toolbar color="primary">
+    <button mat-icon-button (click)="goBack()" matTooltip="Quay lại">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="title">Chỉnh sửa sự kiện</span>
+    <span class="spacer"></span>
+  </mat-toolbar>
+
+  <div class="content-container">
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Đang tải thông tin sự kiện...</p>
+    </div>
+
+    <!-- Edit Form -->
+    <div *ngIf="!isLoading && event" class="form-container">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Thông tin sự kiện</mat-card-title>
+          <mat-card-subtitle>Chỉnh sửa thông tin chi tiết của sự kiện</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
+            <!-- Basic Information -->
+            <div class="form-section">
+              <h3>Thông tin cơ bản</h3>
+              
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Tên sự kiện *</mat-label>
+                <input matInput formControlName="name" placeholder="Nhập tên sự kiện">
+                <mat-error>{{ getErrorMessage('name') }}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Mô tả</mat-label>
+                <textarea matInput formControlName="description" rows="3" 
+                         placeholder="Mô tả chi tiết về sự kiện"></textarea>
+              </mat-form-field>
+            </div>
+
+            <!-- Time Information -->
+            <div class="form-section">
+              <h3>Thời gian</h3>
+              
+              <div class="time-row">
+                <mat-form-field appearance="outline" class="date-field">
+                  <mat-label>Ngày bắt đầu *</mat-label>
+                  <input matInput [matDatepicker]="startDatePicker" formControlName="startDate">
+                  <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #startDatePicker></mat-datepicker>
+                  <mat-error>{{ getErrorMessage('startDate') }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="time-field">
+                  <mat-label>Giờ bắt đầu *</mat-label>
+                  <input matInput type="time" formControlName="startTime">
+                  <mat-error>{{ getErrorMessage('startTime') }}</mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="time-row">
+                <mat-form-field appearance="outline" class="date-field">
+                  <mat-label>Ngày kết thúc *</mat-label>
+                  <input matInput [matDatepicker]="endDatePicker" formControlName="endDate">
+                  <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #endDatePicker></mat-datepicker>
+                  <mat-error>{{ getErrorMessage('endDate') }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="time-field">
+                  <mat-label>Giờ kết thúc *</mat-label>
+                  <input matInput type="time" formControlName="endTime">
+                  <mat-error>{{ getErrorMessage('endTime') }}</mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <!-- Location Information -->
+            <div class="form-section">
+              <h3>Địa điểm</h3>
+              
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Tên địa điểm *</mat-label>
+                <input matInput formControlName="locationName" placeholder="Ví dụ: Hội trường A, Tòa nhà B">
+                <mat-error>{{ getErrorMessage('locationName') }}</mat-error>
+              </mat-form-field>
+
+              <div class="location-row">
+                <mat-form-field appearance="outline" class="coordinate-field">
+                  <mat-label>Vĩ độ (Latitude)</mat-label>
+                  <input matInput formControlName="latitude" placeholder="21.0285">
+                  <mat-error>{{ getErrorMessage('latitude') }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="coordinate-field">
+                  <mat-label>Kinh độ (Longitude)</mat-label>
+                  <input matInput formControlName="longitude" placeholder="105.8542">
+                  <mat-error>{{ getErrorMessage('longitude') }}</mat-error>
+                </mat-form-field>
+
+                <button mat-raised-button type="button" (click)="getCurrentLocation()" 
+                        class="location-btn" matTooltip="Lấy vị trí hiện tại">
+                  <mat-icon>my_location</mat-icon>
+                  Vị trí hiện tại
+                </button>
+              </div>
+
+              <mat-form-field appearance="outline" class="radius-field">
+                <mat-label>Bán kính cho phép (mét) *</mat-label>
+                <input matInput type="number" formControlName="radiusMeters" min="10" max="10000">
+                <mat-hint>Khoảng cách tối đa từ vị trí để có thể điểm danh</mat-hint>
+                <mat-error>{{ getErrorMessage('radiusMeters') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <!-- Settings -->
+            <div class="form-section">
+              <h3>Cài đặt điểm danh</h3>
+              
+              <div class="checkbox-group">
+                <mat-checkbox formControlName="requireGps">
+                  Yêu cầu GPS để điểm danh
+                </mat-checkbox>
+                <mat-hint>Người tham gia phải bật GPS và ở trong bán kính cho phép</mat-hint>
+              </div>
+
+              <div class="checkbox-group">
+                <mat-checkbox formControlName="allowLateCheckin">
+                  Cho phép điểm danh muộn
+                </mat-checkbox>
+                <mat-hint>Cho phép điểm danh sau thời gian kết thúc sự kiện</mat-hint>
+              </div>
+
+              <mat-form-field appearance="outline" class="time-field" 
+                             *ngIf="eventForm.get('allowLateCheckin')?.value">
+                <mat-label>Thời gian cho phép điểm danh muộn (phút)</mat-label>
+                <input matInput type="number" formControlName="lateCheckinMinutes" min="1" max="1440">
+                <mat-error>{{ getErrorMessage('lateCheckinMinutes') }}</mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="time-field">
+                <mat-label>Thời gian làm mới QR (giây) *</mat-label>
+                <input matInput type="number" formControlName="qrRefreshIntervalSeconds" min="10" max="3600">
+                <mat-hint>QR code sẽ được làm mới sau khoảng thời gian này</mat-hint>
+                <mat-error>{{ getErrorMessage('qrRefreshIntervalSeconds') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button mat-button type="button" (click)="goBack()" [disabled]="isSaving">
+                Hủy
+              </button>
+              <button mat-raised-button color="primary" type="submit" 
+                      [disabled]="!eventForm.valid || isSaving">
+                <mat-icon *ngIf="!isSaving">save</mat-icon>
+                <mat-spinner *ngIf="isSaving" diameter="20"></mat-spinner>
+                {{ isSaving ? 'Đang lưu...' : 'Lưu thay đổi' }}
+              </button>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!isLoading && !event" class="error-state">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3>Không tìm thấy sự kiện</h3>
+      <p>Sự kiện không tồn tại hoặc bạn không có quyền chỉnh sửa.</p>
+      <button mat-raised-button color="primary" (click)="goBack()">
+        Quay lại
+      </button>
+    </div>
+  </div>
+</div>

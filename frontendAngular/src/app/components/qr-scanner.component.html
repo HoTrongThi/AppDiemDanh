@@ -1,0 +1,83 @@
+<div class="qr-scanner-container">
+  <mat-card class="scanner-card">
+    <mat-card-header>
+      <mat-card-title>Quét QR Code</mat-card-title>
+      <mat-card-subtitle>Quét QR code để điểm danh sự kiện</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="scanner-section">
+        <div *ngIf="!isCameraActive && !isProcessing" class="start-section">
+          <mat-icon class="camera-icon">qr_code_scanner</mat-icon>
+          <h3>Sẵn sàng quét QR</h3>
+          <p>Nhấn nút bên dưới để bắt đầu quét QR code</p>
+          <button mat-raised-button color="primary" (click)="startScanning()">
+            <mat-icon>camera_alt</mat-icon>
+            Bắt đầu quét
+          </button>
+          
+          <!-- Demo button for testing -->
+          <button mat-button color="accent" (click)="simulateQrScan()" style="margin-top: 16px;">
+            <mat-icon>play_arrow</mat-icon>
+            Demo QR Scan
+          </button>
+        </div>
+        
+        <div *ngIf="isCameraActive" class="camera-section">
+          <video #videoElement class="camera-video" autoplay playsinline></video>
+          <div class="camera-overlay">
+            <div class="scan-frame"></div>
+            <p class="scan-instruction">Đưa QR code vào khung để quét</p>
+          </div>
+          <div class="camera-controls">
+            <button mat-button color="warn" (click)="stopScanning()">
+              <mat-icon>stop</mat-icon>
+              Dừng quét
+            </button>
+            <button mat-button color="accent" (click)="simulateQrScan()">
+              <mat-icon>play_arrow</mat-icon>
+              Demo Scan
+            </button>
+          </div>
+        </div>
+        
+        <div *ngIf="isProcessing" class="processing-section">
+          <mat-spinner></mat-spinner>
+          <h3>Đang xử lý...</h3>
+          <p>{{ processingMessage }}</p>
+        </div>
+      </div>
+      
+      <!-- Location Status -->
+      <div class="location-status" *ngIf="locationData">
+        <mat-icon [color]="locationData.accuracy <= 50 ? 'primary' : 'warn'">
+          {{ locationData.accuracy <= 50 ? 'gps_fixed' : 'gps_not_fixed' }}
+        </mat-icon>
+        <span>GPS: {{ locationData.accuracy }}m độ chính xác</span>
+      </div>
+      
+      <!-- Scan Result -->
+      <div *ngIf="scanResult" class="scan-result">
+        <mat-card [class]="scanResult.success ? 'success-card' : 'error-card'">
+          <mat-card-content>
+            <div class="result-header">
+              <mat-icon>{{ scanResult.success ? 'check_circle' : 'error' }}</mat-icon>
+              <h3>{{ scanResult.success ? 'Điểm danh thành công!' : 'Điểm danh thất bại' }}</h3>
+            </div>
+            <p>{{ scanResult.message }}</p>
+            <div *ngIf="scanResult.eventInfo" class="event-info">
+              <p><strong>Sự kiện:</strong> {{ scanResult.eventInfo.eventName }}</p>
+              <p><strong>Địa điểm:</strong> {{ scanResult.eventInfo.locationName }}</p>
+            </div>
+            <div class="result-actions">
+              <button mat-button color="primary" (click)="scanResult = null">
+                <mat-icon>refresh</mat-icon>
+                Quét lại
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

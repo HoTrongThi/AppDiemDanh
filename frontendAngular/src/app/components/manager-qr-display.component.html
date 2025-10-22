@@ -1,0 +1,156 @@
+<div class="qr-display-container" (keydown)="onKeyDown($event)" tabindex="0">
+  <!-- Header (hidden in fullscreen) -->
+  <mat-toolbar color="primary" *ngIf="!isFullscreen">
+    <button mat-icon-button (click)="goBack()" matTooltip="Quay lại">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="title">Hiển thị QR - {{ event?.name }}</span>
+    <span class="spacer"></span>
+    <button mat-icon-button (click)="goToEventDetail()" matTooltip="Chi tiết sự kiện">
+      <mat-icon>info</mat-icon>
+    </button>
+    <button mat-icon-button (click)="goToAttendance()" matTooltip="Xem điểm danh">
+      <mat-icon>how_to_reg</mat-icon>
+    </button>
+    <button mat-icon-button (click)="toggleFullscreen()" matTooltip="Toàn màn hình (F11)">
+      <mat-icon>fullscreen</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner diameter="60"></mat-spinner>
+    <p>Đang tải thông tin sự kiện...</p>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading && event" class="content-container" [ngClass]="{ 'fullscreen': isFullscreen }">
+    <!-- Event Info Header -->
+    <div class="event-header" [ngClass]="{ 'compact': isFullscreen }">
+      <div class="event-info">
+        <h1 class="event-title">{{ event.name }}</h1>
+        <div class="event-meta">
+          <div class="meta-item">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ formatEventStartTime() }} - {{ formatEventEndTime() }}</span>
+          </div>
+          <div class="meta-item">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ event.locationName || 'Chưa xác định' }}</span>
+          </div>
+          <div class="meta-item status-item">
+            <mat-icon [ngClass]="getEventStatusColor()">radio_button_checked</mat-icon>
+            <span [ngClass]="getEventStatusColor()">{{ getEventStatus() }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Real-time Stats -->
+      <div class="stats-panel" *ngIf="!isFullscreen">
+        <div class="stat-card">
+          <div class="stat-number">{{ attendanceCount }}</div>
+          <div class="stat-label">Đã điểm danh</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ event.participantCount || 0 }}</div>
+          <div class="stat-label">Tổng số người</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">{{ getAttendanceRate() }}%</div>
+          <div class="stat-label">Tỷ lệ tham gia</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR Display Area -->
+    <div class="qr-display-area">
+      <div class="qr-container">
+        <!-- QR Code Component -->
+        <app-qr-display 
+          [eventId]="eventId"
+          [size]="isFullscreen ? 400 : 300"
+          [showEventInfo]="false">
+        </app-qr-display>
+        
+        <!-- QR Instructions -->
+        <div class="qr-instructions" [ngClass]="{ 'compact': isFullscreen }">
+          <h3>Hướng dẫn điểm danh</h3>
+          <ol>
+            <li>Mở ứng dụng điểm danh trên thiết bị di động</li>
+            <li>Quét mã QR này bằng camera</li>
+            <li>Hoặc nhập mã sự kiện: <strong>{{ eventId }}</strong></li>
+            <li>Xác nhận vị trí và hoàn tất điểm danh</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Control Panel (hidden in fullscreen) -->
+    <div class="control-panel" *ngIf="!isFullscreen">
+      <mat-card>
+        <mat-card-content>
+          <div class="controls-row">
+            <div class="refresh-info">
+              <mat-icon>update</mat-icon>
+              <span>Cập nhật lần cuối: {{ formatTime(lastRefreshTime) }}</span>
+            </div>
+            
+            <div class="control-buttons">
+              <button mat-raised-button (click)="refreshQr()" matTooltip="Làm mới QR (F5)">
+                <mat-icon>refresh</mat-icon>
+                Làm mới QR
+              </button>
+              
+              <button mat-raised-button color="primary" (click)="toggleFullscreen()" matTooltip="Toàn màn hình (F11)">
+                <mat-icon>fullscreen</mat-icon>
+                Toàn màn hình
+              </button>
+              
+              <button mat-raised-button color="accent" (click)="goToAttendance()">
+                <mat-icon>how_to_reg</mat-icon>
+                Xem điểm danh
+              </button>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Fullscreen Controls -->
+    <div class="fullscreen-controls" *ngIf="isFullscreen">
+      <button mat-fab color="primary" (click)="toggleFullscreen()" matTooltip="Thoát toàn màn hình (ESC)">
+        <mat-icon>fullscreen_exit</mat-icon>
+      </button>
+      
+      <div class="fullscreen-stats">
+        <div class="mini-stat">
+          <span class="number">{{ attendanceCount }}</span>
+          <span class="label">Đã điểm danh</span>
+        </div>
+        <div class="mini-stat">
+          <span class="number">{{ getAttendanceRate() }}%</span>
+          <span class="label">Tỷ lệ</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Keyboard Shortcuts Help -->
+    <div class="shortcuts-help" *ngIf="!isFullscreen">
+      <small>
+        <strong>Phím tắt:</strong> 
+        F11 (Toàn màn hình) • F5 (Làm mới) • ESC (Thoát)
+      </small>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!isLoading && !event" class="error-container">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <h3>Không tìm thấy sự kiện</h3>
+    <p>Sự kiện không tồn tại hoặc bạn không có quyền truy cập.</p>
+    <button mat-raised-button color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Quay lại danh sách
+    </button>
+  </div>
+</div>

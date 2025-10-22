@@ -1,0 +1,211 @@
+<div class="manager-events-container">
+  <!-- Header -->
+  <mat-toolbar color="primary">
+    <button mat-icon-button (click)="goBack()" matTooltip="Quay lại">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="title">Quản lý sự kiện</span>
+    <span class="spacer"></span>
+    <button mat-raised-button color="accent" (click)="createNewEvent()">
+      <mat-icon>add</mat-icon>
+      Tạo sự kiện mới
+    </button>
+  </mat-toolbar>
+
+  <div class="content-container">
+    <!-- Filters -->
+    <mat-card class="filters-card">
+      <mat-card-content>
+        <div class="filters-row">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Tìm kiếm</mat-label>
+            <input matInput [(ngModel)]="searchText" (ngModelChange)="onSearchChange()" 
+                   placeholder="Tên sự kiện, mô tả, địa điểm...">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="status-field">
+            <mat-label>Trạng thái</mat-label>
+            <mat-select [(value)]="statusFilter" (selectionChange)="onStatusFilterChange()">
+              <mat-option *ngFor="let option of statusOptions" [value]="option.value">
+                {{ option.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="results-info">
+            <span class="results-count">
+              {{ filteredEvents.length }} / {{ events.length }} sự kiện
+            </span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Events Table -->
+    <mat-card class="table-card">
+      <mat-card-content>
+        <div *ngIf="isLoading" class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Đang tải danh sách sự kiện...</p>
+        </div>
+
+        <div *ngIf="!isLoading && events.length === 0" class="empty-state">
+          <mat-icon class="empty-icon">event_busy</mat-icon>
+          <h3>Chưa có sự kiện nào</h3>
+          <p>Bạn chưa tạo sự kiện nào. Hãy tạo sự kiện đầu tiên!</p>
+          <button mat-raised-button color="primary" (click)="createNewEvent()">
+            <mat-icon>add</mat-icon>
+            Tạo sự kiện đầu tiên
+          </button>
+        </div>
+
+        <div *ngIf="!isLoading && events.length > 0 && filteredEvents.length === 0" class="no-results">
+          <mat-icon class="no-results-icon">search_off</mat-icon>
+          <h3>Không tìm thấy sự kiện</h3>
+          <p>Không có sự kiện nào phù hợp với bộ lọc hiện tại.</p>
+          <button mat-button (click)="statusFilter = ''; searchText = ''; applyFilters()">
+            Xóa bộ lọc
+          </button>
+        </div>
+
+        <div *ngIf="!isLoading && filteredEvents.length > 0" class="table-container">
+          <table mat-table [dataSource]="filteredEvents" class="events-table">
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Tên sự kiện</th>
+              <td mat-cell *matCellDef="let event">
+                <div class="event-name-cell">
+                  <div class="event-name">{{ event.name }}</div>
+                  <div class="event-description" *ngIf="event.description">
+                    {{ event.description }}
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Trạng thái</th>
+              <td mat-cell *matCellDef="let event">
+                <mat-chip [color]="getStatusColor(event.status)" selected>
+                  {{ getStatusLabel(event.status) }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Start Time Column -->
+            <ng-container matColumnDef="startTime">
+              <th mat-header-cell *matHeaderCellDef>Thời gian</th>
+              <td mat-cell *matCellDef="let event">
+                <div class="time-cell">
+                  <div class="start-time">{{ formatDate(event.startTime) }}</div>
+                  <div class="time-status" [ngClass]="{
+                    'upcoming': isEventUpcoming(event),
+                    'active': isEventActive(event),
+                    'past': isEventPast(event)
+                  }">
+                    <mat-icon *ngIf="isEventUpcoming(event)">schedule</mat-icon>
+                    <mat-icon *ngIf="isEventActive(event)">play_circle</mat-icon>
+                    <mat-icon *ngIf="isEventPast(event)">check_circle</mat-icon>
+                    <span *ngIf="isEventUpcoming(event)">Sắp diễn ra</span>
+                    <span *ngIf="isEventActive(event)">Đang diễn ra</span>
+                    <span *ngIf="isEventPast(event)">Đã kết thúc</span>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Location Column -->
+            <ng-container matColumnDef="location">
+              <th mat-header-cell *matHeaderCellDef>Địa điểm</th>
+              <td mat-cell *matCellDef="let event">
+                <div class="location-cell">
+                  <mat-icon>location_on</mat-icon>
+                  <span>{{ formatLocation(event) }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Participants Column -->
+            <ng-container matColumnDef="participants">
+              <th mat-header-cell *matHeaderCellDef>Người tham gia</th>
+              <td mat-cell *matCellDef="let event">
+                <div class="participants-cell">
+                  <mat-icon>group</mat-icon>
+                  <span>{{ getParticipantCount(event) }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Attendance Column -->
+            <ng-container matColumnDef="attendance">
+              <th mat-header-cell *matHeaderCellDef>Điểm danh</th>
+              <td mat-cell *matCellDef="let event">
+                <div class="attendance-cell">
+                  <div class="attendance-numbers">
+                    <span class="attended">{{ getAttendanceCount(event) }}</span>
+                    <span class="separator">/</span>
+                    <span class="total">{{ getParticipantCount(event) }}</span>
+                  </div>
+                  <div class="attendance-rate" [ngClass]="{
+                    'high': getAttendanceRate(event) >= 80,
+                    'medium': getAttendanceRate(event) >= 50 && getAttendanceRate(event) < 80,
+                    'low': getAttendanceRate(event) < 50
+                  }">
+                    {{ getAttendanceRate(event) }}%
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Thao tác</th>
+              <td mat-cell *matCellDef="let event">
+                <div class="actions-cell">
+                  <button mat-icon-button [matMenuTriggerFor]="actionMenu" matTooltip="Thao tác">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #actionMenu="matMenu">
+                    <button mat-menu-item (click)="viewEvent(event.id)">
+                      <mat-icon>visibility</mat-icon>
+                      <span>Xem chi tiết</span>
+                    </button>
+                    <button mat-menu-item (click)="editEvent(event.id)">
+                      <mat-icon>edit</mat-icon>
+                      <span>Chỉnh sửa</span>
+                    </button>
+                    <button mat-menu-item (click)="showQrCode(event.id)">
+                      <mat-icon>qr_code</mat-icon>
+                      <span>Hiển thị QR</span>
+                    </button>
+                    <button mat-menu-item (click)="viewAttendance(event.id)">
+                      <mat-icon>how_to_reg</mat-icon>
+                      <span>Xem điểm danh</span>
+                    </button>
+                    <button mat-menu-item (click)="viewParticipants(event.id)">
+                      <mat-icon>group</mat-icon>
+                      <span>Quản lý người tham gia</span>
+                    </button>
+                    <mat-divider></mat-divider>
+                    <button mat-menu-item (click)="deleteEvent(event.id)" class="delete-action">
+                      <mat-icon>delete</mat-icon>
+                      <span>Xóa</span>
+                    </button>
+                  </mat-menu>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                class="event-row" 
+                [ngClass]="{ 'active-event': isEventActive(row) }"
+                (click)="viewEvent(row.id)"></tr>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

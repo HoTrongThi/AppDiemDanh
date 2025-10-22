@@ -1,0 +1,86 @@
+<div class="qr-display-container">
+  <!-- Control Panel (only show if not using input eventId) -->
+  <mat-card class="control-card" *ngIf="!eventId && showEventInfo">
+    <mat-card-header>
+      <mat-card-title>Hiển thị QR Code</mat-card-title>
+      <mat-card-subtitle>Tạo và hiển thị QR code cho sự kiện</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Chọn sự kiện</mat-label>
+        <mat-select [(value)]="selectedEventId" (selectionChange)="onEventChange()">
+          <mat-option *ngFor="let event of events" [value]="event.id">
+            {{ event.name }} - {{ formatDateTime(event.startTime) }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+      <div class="actions">
+        <button mat-raised-button color="primary" 
+                (click)="generateQr()" 
+                [disabled]="!selectedEventId || isGenerating">
+          <mat-icon>qr_code</mat-icon>
+          Tạo QR Code
+        </button>
+        
+        <button mat-raised-button color="accent" 
+                (click)="refreshQr()" 
+                [disabled]="!currentQrSession || isGenerating">
+          <mat-icon>refresh</mat-icon>
+          Làm mới QR
+        </button>
+        
+        <button mat-button color="warn" 
+                (click)="stopDisplay()" 
+                [disabled]="!currentQrSession">
+          <mat-icon>stop</mat-icon>
+          Dừng hiển thị
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="qr-display-section" *ngIf="currentQrSession">
+    <mat-card class="qr-card">
+      <mat-card-header *ngIf="showEventInfo">
+        <mat-card-title>QR Code - {{ selectedEventName }}</mat-card-title>
+        <mat-card-subtitle>
+          Hết hạn: {{ formatDateTime(getExpiresAt()) }}
+          <span class="countdown" [class.expired]="isExpired">
+            ({{ timeRemaining }})
+          </span>
+        </mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content class="qr-content">
+        <div *ngIf="isGenerating" class="loading">
+          <mat-spinner></mat-spinner>
+          <p>Đang tạo QR code...</p>
+        </div>
+        
+        <div *ngIf="!isGenerating && qrCodeImage" class="qr-image-container">
+          <img [src]="qrCodeImage" alt="QR Code" class="qr-image">
+          <div class="qr-info" *ngIf="showEventInfo">
+            <p><strong>Session ID:</strong> {{ currentQrSession.sessionId || currentQrSession.SessionId }}</p>
+            <p><strong>Làm mới sau:</strong> {{ currentQrSession.refreshIntervalSeconds || currentQrSession.RefreshIntervalSeconds }}s</p>
+            <div class="status-indicator" [class.active]="!isExpired">
+              <mat-icon>{{ isExpired ? 'error' : 'check_circle' }}</mat-icon>
+              {{ isExpired ? 'Đã hết hạn' : 'Đang hoạt động' }}
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!currentQrSession && !isGenerating && showEventInfo" class="no-qr">
+    <mat-card>
+      <mat-card-content class="no-qr-content">
+        <mat-icon>qr_code_2</mat-icon>
+        <h3>Chưa có QR Code</h3>
+        <p>Chọn sự kiện và nhấn "Tạo QR Code" để bắt đầu</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

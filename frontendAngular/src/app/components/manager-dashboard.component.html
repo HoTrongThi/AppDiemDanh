@@ -1,0 +1,172 @@
+<div class="manager-dashboard">
+  <!-- Header Toolbar -->
+  <mat-toolbar color="primary" class="dashboard-header">
+    <mat-icon>dashboard</mat-icon>
+    <span class="header-title">Quản lý sự kiện</span>
+    <span class="spacer"></span>
+    <span class="user-info">
+      <mat-icon>person</mat-icon>
+      {{ getUserDisplayName() }}
+    </span>
+    <button mat-icon-button (click)="logout()" matTooltip="Đăng xuất">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <div class="dashboard-content">
+    <!-- Quick Stats Cards -->
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon">
+              <mat-icon color="primary">event</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ stats.totalEvents }}</div>
+              <div class="stat-label">Tổng sự kiện</div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon">
+              <mat-icon color="accent">play_circle</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ stats.activeEvents }}</div>
+              <div class="stat-label">Đang diễn ra</div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon">
+              <mat-icon color="primary">group</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ stats.totalParticipants }}</div>
+              <div class="stat-label">Người tham gia</div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon">
+              <mat-icon color="accent">check_circle</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ stats.todayAttendance }}</div>
+              <div class="stat-label">Điểm danh hôm nay</div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Quick Actions -->
+    <mat-card class="actions-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>flash_on</mat-icon>
+          Thao tác nhanh
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="actions-grid">
+          <button mat-raised-button color="primary" (click)="goToCreateEvent()" class="action-button">
+            <mat-icon>add</mat-icon>
+            Tạo sự kiện mới
+          </button>
+          <button mat-raised-button color="accent" (click)="goToEventList()" class="action-button">
+            <mat-icon>list</mat-icon>
+            Quản lý sự kiện
+          </button>
+          <button mat-raised-button (click)="goToProfile()" class="action-button">
+            <mat-icon>account_circle</mat-icon>
+            Thông tin tài khoản
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Recent Events -->
+    <mat-card class="events-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>schedule</mat-icon>
+          Sự kiện gần đây
+        </mat-card-title>
+        <div class="spacer"></div>
+        <button mat-button color="primary" (click)="goToEventList()">
+          Xem tất cả
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="isLoading" class="loading-container">
+          <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+          <p>Đang tải dữ liệu...</p>
+        </div>
+
+        <div *ngIf="!isLoading && recentEvents.length === 0" class="empty-state">
+          <mat-icon class="empty-icon">event_busy</mat-icon>
+          <h3>Chưa có sự kiện nào</h3>
+          <p>Bạn chưa tạo sự kiện nào. Hãy tạo sự kiện đầu tiên!</p>
+          <button mat-raised-button color="primary" (click)="goToCreateEvent()">
+            <mat-icon>add</mat-icon>
+            Tạo sự kiện đầu tiên
+          </button>
+        </div>
+
+        <div *ngIf="!isLoading && recentEvents.length > 0" class="events-list">
+          <div *ngFor="let event of recentEvents" class="event-item">
+            <div class="event-info">
+              <div class="event-header">
+                <h4 class="event-name">{{ event.name }}</h4>
+              </div>
+              <p class="event-description">{{ event.description || 'Không có mô tả' }}</p>
+              <div class="event-meta">
+                <span class="meta-item">
+                  <mat-icon>schedule</mat-icon>
+                  {{ formatDate(event.startTime) }}
+                </span>
+                <span class="meta-item">
+                  <mat-icon>location_on</mat-icon>
+                  {{ event.locationName || 'Chưa xác định' }}
+                </span>
+                <span class="meta-item">
+                  <mat-icon>group</mat-icon>
+                  {{ event.participantCount || 0 }} người tham gia
+                </span>
+              </div>
+            </div>
+            <div class="event-actions">
+              <button mat-icon-button (click)="viewEvent(event.id)" matTooltip="Xem chi tiết">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button (click)="editEvent(event.id)" matTooltip="Chỉnh sửa">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button (click)="showQrCode(event.id)" matTooltip="Hiển thị QR">
+                <mat-icon>qr_code</mat-icon>
+              </button>
+              <button mat-icon-button (click)="viewAttendance(event.id)" matTooltip="Xem điểm danh">
+                <mat-icon>how_to_reg</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

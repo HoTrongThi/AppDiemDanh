@@ -1,0 +1,71 @@
+<div class="event-list-container">
+  <div class="header">
+    <h2>Danh sách sự kiện</h2>
+    <button mat-raised-button color="primary" (click)="loadEvents()" [disabled]="isLoading">
+      <mat-icon>refresh</mat-icon>
+      Làm mới
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Đang tải sự kiện...</p>
+  </div>
+
+  <div *ngIf="!isLoading && events.length === 0" class="no-events">
+    <mat-icon>event_busy</mat-icon>
+    <h3>Không có sự kiện nào</h3>
+    <p>Hiện tại chưa có sự kiện nào được tạo.</p>
+  </div>
+
+  <div class="events-grid" *ngIf="!isLoading && events.length > 0">
+    <mat-card *ngFor="let event of events" class="event-card">
+      <mat-card-header>
+        <mat-card-title>{{ event.name }}</mat-card-title>
+        <mat-card-subtitle>
+          <mat-chip [color]="getStatusColor(event.status)" selected>
+            {{ getStatusText(event.status) }}
+          </mat-chip>
+        </mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <p *ngIf="event.description" class="description">{{ event.description }}</p>
+        
+        <div class="event-details">
+          <div class="detail-item" *ngIf="event.locationName">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ event.locationName }}</span>
+          </div>
+          
+          <div class="detail-item">
+            <mat-icon>schedule</mat-icon>
+            <span>{{ formatDateTime(event.startTime) }}</span>
+          </div>
+          
+          <div class="detail-item">
+            <mat-icon>people</mat-icon>
+            <span>{{ event.attendanceCount }}/{{ event.participantCount }} đã điểm danh</span>
+          </div>
+          
+          <div class="detail-item" *ngIf="event.requireGps">
+            <mat-icon>gps_fixed</mat-icon>
+            <span>Yêu cầu GPS ({{ event.radiusMeters }}m)</span>
+          </div>
+        </div>
+      </mat-card-content>
+      
+      <mat-card-actions>
+        <button mat-button color="primary" (click)="viewEvent(event)">
+          <mat-icon>visibility</mat-icon>
+          Xem chi tiết
+        </button>
+        
+        <button mat-button color="accent" *ngIf="isAdmin" (click)="generateQr(event)">
+          <mat-icon>qr_code</mat-icon>
+          Tạo QR
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

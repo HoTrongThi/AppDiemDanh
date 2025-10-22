@@ -1,0 +1,168 @@
+<div class="event-detail-container">
+  <!-- Header -->
+  <mat-toolbar color="primary">
+    <button mat-icon-button (click)="goBack()" matTooltip="Quay lại">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="title">Chi tiết sự kiện</span>
+    <span class="spacer"></span>
+    <button mat-raised-button color="accent" (click)="editEvent()" *ngIf="event">
+      <mat-icon>edit</mat-icon>
+      Chỉnh sửa
+    </button>
+  </mat-toolbar>
+
+  <div class="content-container">
+    <!-- Loading -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Đang tải thông tin sự kiện...</p>
+    </div>
+
+    <!-- Event Details -->
+    <div *ngIf="!isLoading && event" class="event-details">
+      <!-- Basic Info Card -->
+      <mat-card class="info-card">
+        <mat-card-header>
+          <mat-card-title>{{ event.name }}</mat-card-title>
+          <mat-card-subtitle>
+            <mat-chip [color]="getStatusColor(event.status)" selected>
+              {{ getStatusLabel(event.status) }}
+            </mat-chip>
+            <mat-chip [ngClass]="{
+              'upcoming': isEventUpcoming(),
+              'active': isEventActive(),
+              'past': isEventPast()
+            }">
+              <mat-icon>{{ getEventTimeStatusIcon() }}</mat-icon>
+              {{ getEventTimeStatus() }}
+            </mat-chip>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="description" *ngIf="event.description">
+            <h4>Mô tả</h4>
+            <p>{{ event.description }}</p>
+          </div>
+          <mat-divider *ngIf="event.description"></mat-divider>
+          
+          <div class="details-grid">
+            <!-- Time Information -->
+            <div class="detail-section">
+              <h4><mat-icon>schedule</mat-icon> Thời gian</h4>
+              <div class="time-info">
+                <div class="time-row">
+                  <span class="label">Bắt đầu:</span>
+                  <span class="value">{{ formatDate(event.startTime) }}</span>
+                </div>
+                <div class="time-row">
+                  <span class="label">Kết thúc:</span>
+                  <span class="value">{{ formatDate(event.endTime) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Location Information -->
+            <div class="detail-section">
+              <h4><mat-icon>location_on</mat-icon> Địa điểm</h4>
+              <div class="location-info">
+                <div class="location-name">{{ formatLocation() }}</div>
+                <div class="location-details" *ngIf="hasGpsLocation()">
+                  <div class="gps-coords">
+                    <mat-icon>gps_fixed</mat-icon>
+                    <span>{{ event.location!.latitude }}, {{ event.location!.longitude }}</span>
+                  </div>
+                  <div class="radius" *ngIf="event.radiusMeters">
+                    <mat-icon>radio_button_unchecked</mat-icon>
+                    <span>Bán kính: {{ event.radiusMeters }}m</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Participants & Attendance -->
+            <div class="detail-section">
+              <h4><mat-icon>group</mat-icon> Người tham gia</h4>
+              <div class="participants-info">
+                <div class="participant-stats">
+                  <div class="stat-item">
+                    <span class="stat-number">{{ event.participantCount }}</span>
+                    <span class="stat-label">Tổng số</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">{{ event.attendanceCount }}</span>
+                    <span class="stat-label">Đã điểm danh</span>
+                  </div>
+                  <div class="stat-item">
+                    <span class="stat-number">{{ getAttendanceRate() }}%</span>
+                    <span class="stat-label">Tỷ lệ</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Settings -->
+            <div class="detail-section">
+              <h4><mat-icon>settings</mat-icon> Cài đặt</h4>
+              <div class="settings-info">
+                <div class="setting-item">
+                  <mat-icon>{{ event.requireGps ? 'gps_fixed' : 'gps_off' }}</mat-icon>
+                  <span>{{ event.requireGps ? 'Yêu cầu GPS' : 'Không yêu cầu GPS' }}</span>
+                </div>
+                <div class="setting-item">
+                  <mat-icon>{{ event.allowLateCheckin ? 'schedule' : 'schedule_send' }}</mat-icon>
+                  <span>{{ event.allowLateCheckin ? 'Cho phép điểm danh muộn' : 'Không cho phép điểm danh muộn' }}</span>
+                </div>
+                <div class="setting-item" *ngIf="event.allowLateCheckin && event.lateCheckinMinutes">
+                  <mat-icon>timer</mat-icon>
+                  <span>Thời gian điểm danh muộn: {{ event.lateCheckinMinutes }} phút</span>
+                </div>
+                <div class="setting-item">
+                  <mat-icon>qr_code</mat-icon>
+                  <span>QR làm mới mỗi: {{ event.qrRefreshIntervalSeconds }}s</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Action Cards -->
+      <div class="action-cards">
+        <mat-card class="action-card" (click)="showQrCode()">
+          <mat-card-content>
+            <mat-icon class="action-icon">qr_code</mat-icon>
+            <h3>Hiển thị QR</h3>
+            <p>Hiển thị mã QR để người tham gia điểm danh</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="action-card" (click)="viewParticipants()">
+          <mat-card-content>
+            <mat-icon class="action-icon">group</mat-icon>
+            <h3>Quản lý người tham gia</h3>
+            <p>Xem và quản lý danh sách người tham gia</p>
+          </mat-card-content>
+        </mat-card>
+
+        <mat-card class="action-card" (click)="viewAttendance()">
+          <mat-card-content>
+            <mat-icon class="action-icon">how_to_reg</mat-icon>
+            <h3>Xem điểm danh</h3>
+            <p>Xem kết quả điểm danh và thống kê</p>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!isLoading && !event" class="error-state">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3>Không tìm thấy sự kiện</h3>
+      <p>Sự kiện không tồn tại hoặc bạn không có quyền truy cập.</p>
+      <button mat-raised-button color="primary" (click)="goBack()">
+        Quay lại danh sách
+      </button>
+    </div>
+  </div>
+</div>

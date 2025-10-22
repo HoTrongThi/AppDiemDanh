@@ -1,0 +1,117 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.login-button {
+  height: 48px;
+  margin-top: 16px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 24px;
+  color: #333;
+}
+
+mat-card-subtitle {
+  color: #666;
+  margin-top: 8px;
+}
+
+.register-link {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.register-link p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.register-link button {
+  font-weight: 500;
+}
+
+.demo-accounts {
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  margin-top: 16px;
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+.demo-accounts p {
+  margin: 4px 0;
+}
+
+.debug-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #ddd;
+  text-align: center;
+}
+
+.debug-section small {
+  color: #888;
+  font-size: 11px;
+}
+
+.demo-accounts strong {
+  color: #333;
+}
+
+/* Material form field customization */
+.mat-mdc-form-field {
+  margin-bottom: 16px;
+}
+
+.mat-mdc-form-field-error {
+  font-size: 12px;
+}
+
+/* Loading spinner in button */
+.login-button mat-spinner {
+  margin-right: 8px;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 16px;
+  }
+  
+  .login-card {
+    padding: 16px;
+  }
+  
+  mat-card-title {
+    font-size: 20px;
+  }
+}

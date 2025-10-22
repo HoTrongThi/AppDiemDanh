@@ -1,0 +1,1 @@
+export const environment = {\n  production: true,\n  apiUrl: 'https://your-production-api.com/api',\n  appName: 'App Điểm Danh',\n  version: '1.0.0'\n};"

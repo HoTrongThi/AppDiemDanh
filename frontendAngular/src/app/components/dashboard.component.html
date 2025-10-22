@@ -1,0 +1,104 @@
+<mat-toolbar color="primary">
+  <span>
+    <mat-icon>qr_code_scanner</mat-icon>
+    App Điểm Danh
+  </span>
+  <span class="spacer"></span>
+  <span class="user-info" *ngIf="currentUser">
+    <mat-icon>person</mat-icon>
+    {{ currentUser.fullName }} ({{ currentUser.role }})
+  </span>
+  <button mat-icon-button (click)="goToAttendanceHistory()" matTooltip="Lịch sử điểm danh">
+    <mat-icon>history</mat-icon>
+  </button>
+  <button mat-icon-button (click)="logout()">
+    <mat-icon>logout</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="dashboard-container">
+  <div class="welcome-section">
+    <h1>Chào mừng, {{ currentUser?.fullName }}!</h1>
+    <p>Hệ thống điểm danh QR động với xác thực GPS/Wi-Fi</p>
+  </div>
+
+  <mat-tab-group class="dashboard-tabs">
+    <!-- Events Tab -->
+    <mat-tab label="Sự kiện">
+      <div class="tab-content">
+        <app-event-list></app-event-list>
+      </div>
+    </mat-tab>
+
+    <!-- QR Display Tab (Admin only) -->
+    <mat-tab label="Hiển thị QR" *ngIf="isAdmin">
+      <div class="tab-content">
+        <app-qr-display></app-qr-display>
+      </div>
+    </mat-tab>
+
+    <!-- QR Scanner Tab -->
+    <mat-tab label="Quét QR">
+      <div class="tab-content">
+        <app-qr-scanner></app-qr-scanner>
+      </div>
+    </mat-tab>
+
+    <!-- Attendance History Tab -->
+    <mat-tab label="Lịch sử điểm danh">
+      <div class="tab-content">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Lịch sử điểm danh của bạn</mat-card-title>
+            <mat-card-subtitle>Xem chi tiết lịch sử tham gia các sự kiện</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="history-preview">
+              <p>Xem lịch sử điểm danh chi tiết của bạn với các bộ lọc và thống kê.</p>
+              <button mat-raised-button color="primary" (click)="goToAttendanceHistory()">
+                <mat-icon>history</mat-icon>
+                Xem lịch sử chi tiết
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Statistics Tab (Admin only) -->
+    <mat-tab label="Thống kê" *ngIf="isAdmin">
+      <div class="tab-content">
+        <mat-card>
+          <mat-card-header>
+            <mat-card-title>Thống kê hệ thống</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <mat-icon>event</mat-icon>
+                <div class="stat-info">
+                  <h3>{{ totalEvents }}</h3>
+                  <p>Tổng sự kiện</p>
+                </div>
+              </div>
+              <div class="stat-item">
+                <mat-icon>people</mat-icon>
+                <div class="stat-info">
+                  <h3>{{ totalAttendance }}</h3>
+                  <p>Lượt điểm danh</p>
+                </div>
+              </div>
+              <div class="stat-item">
+                <mat-icon>qr_code</mat-icon>
+                <div class="stat-info">
+                  <h3>{{ activeQrSessions }}</h3>
+                  <p>QR đang hoạt động</p>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

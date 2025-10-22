@@ -1,0 +1,273 @@
+.event-detail-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.content-container {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  background-color: #f5f5f5;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 16px;
+}
+
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 16px;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #f44336;
+}
+
+.event-details {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.info-card {
+  margin-bottom: 24px;
+}
+
+.info-card mat-card-title {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.info-card mat-card-subtitle {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.info-card mat-card-subtitle mat-chip {
+  font-size: 0.875rem;
+}
+
+.upcoming {
+  background-color: #2196f3 !important;
+  color: white !important;
+}
+
+.active {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.past {
+  background-color: #9e9e9e !important;
+  color: white !important;
+}
+
+.description {
+  margin-bottom: 24px;
+}
+
+.description h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+}
+
+.description p {
+  margin: 0;
+  line-height: 1.6;
+  color: #666;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.detail-section h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.detail-section h4 mat-icon {
+  color: #1976d2;
+}
+
+.time-info .time-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.time-row .label {
+  font-weight: 500;
+  color: #666;
+}
+
+.time-row .value {
+  color: #333;
+}
+
+.location-info .location-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.location-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gps-coords, .radius {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.gps-coords mat-icon, .radius mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.participants-info .participant-stats {
+  display: flex;
+  gap: 24px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1976d2;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+.settings-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #666;
+}
+
+.setting-item mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #1976d2;
+}
+
+.action-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.action-card {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.action-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #1976d2;
+}
+
+.action-card mat-card-content {
+  text-align: center;
+  padding: 24px;
+}
+
+.action-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #1976d2;
+  margin-bottom: 16px;
+}
+
+.action-card h3 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.action-card p {
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .content-container {
+    padding: 16px;
+  }
+  
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .participant-stats {
+    justify-content: space-around;
+  }
+  
+  .action-cards {
+    grid-template-columns: 1fr;
+  }
+}

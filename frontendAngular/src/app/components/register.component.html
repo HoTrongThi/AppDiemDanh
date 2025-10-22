@@ -1,0 +1,122 @@
+<div class="register-container">
+  <mat-card class="register-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>person_add</mat-icon>
+        Đăng ký tài khoản
+      </mat-card-title>
+      <mat-card-subtitle>Tạo tài khoản mới để sử dụng hệ thống</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <!-- Username -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tên đăng nhập</mat-label>
+          <input matInput formControlName="username" required>
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-error *ngIf="username?.hasError('required')">
+            Vui lòng nhập tên đăng nhập
+          </mat-error>
+          <mat-error *ngIf="username?.hasError('minlength')">
+            Tên đăng nhập phải có ít nhất 3 ký tự
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" required>
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-error *ngIf="email?.hasError('required')">
+            Vui lòng nhập email
+          </mat-error>
+          <mat-error *ngIf="email?.hasError('email')">
+            Email không hợp lệ
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Full Name -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Họ và tên</mat-label>
+          <input matInput formControlName="fullName" required>
+          <mat-icon matSuffix>badge</mat-icon>
+          <mat-error *ngIf="fullName?.hasError('required')">
+            Vui lòng nhập họ và tên
+          </mat-error>
+          <mat-error *ngIf="fullName?.hasError('minlength')">
+            Họ và tên phải có ít nhất 2 ký tự
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Phone Number -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Số điện thoại (tùy chọn)</mat-label>
+          <input matInput formControlName="phoneNumber">
+          <mat-icon matSuffix>phone</mat-icon>
+          <mat-error *ngIf="phoneNumber?.hasError('pattern')">
+            Số điện thoại phải có 10-11 chữ số
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Role -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Vai trò</mat-label>
+          <mat-select formControlName="role">
+            <mat-option value="User">Người dùng</mat-option>
+            <mat-option value="Manager">Quản lý</mat-option>
+            <mat-option value="Admin">Quản trị viên</mat-option>
+          </mat-select>
+          <mat-icon matSuffix>admin_panel_settings</mat-icon>
+        </mat-form-field>
+
+        <!-- Password -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mật khẩu</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" required>
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="password?.hasError('required')">
+            Vui lòng nhập mật khẩu
+          </mat-error>
+          <mat-error *ngIf="password?.hasError('minlength')">
+            Mật khẩu phải có ít nhất 6 ký tự
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Confirm Password -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Xác nhận mật khẩu</mat-label>
+          <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" required>
+          <button mat-icon-button matSuffix (click)="hideConfirmPassword = !hideConfirmPassword" type="button">
+            <mat-icon>{{hideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="confirmPassword?.hasError('required')">
+            Vui lòng xác nhận mật khẩu
+          </mat-error>
+          <mat-error *ngIf="confirmPassword?.hasError('passwordMismatch')">
+            Mật khẩu xác nhận không khớp
+          </mat-error>
+        </mat-form-field>
+        
+        <!-- Submit Button -->
+        <button mat-raised-button color="primary" type="submit" 
+                [disabled]="registerForm.invalid || isLoading" class="full-width register-button">
+          <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+          <span *ngIf="!isLoading">Đăng ký</span>
+        </button>
+      </form>
+    </mat-card-content>
+    
+    <mat-card-actions>
+      <div class="login-link">
+        <p>Đã có tài khoản? 
+          <button mat-button color="primary" (click)="goToLogin()">
+            Đăng nhập ngay
+          </button>
+        </p>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>

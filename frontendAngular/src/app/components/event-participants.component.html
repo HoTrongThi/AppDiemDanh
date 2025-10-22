@@ -1,0 +1,278 @@
+<div class="participants-container">
+  <!-- Header -->
+  <mat-toolbar color="primary">
+    <button mat-icon-button (click)="goBack()" matTooltip="Quay lại">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="title">Người tham gia - {{ event?.name }}</span>
+    <span class="spacer"></span>
+    <button mat-icon-button (click)="goToEventDetail()" matTooltip="Chi tiết sự kiện">
+      <mat-icon>info</mat-icon>
+    </button>
+    <button mat-icon-button (click)="showQrCode()" matTooltip="Hiển thị QR">
+      <mat-icon>qr_code</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <div class="content-container">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon total">
+              <mat-icon>group</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ stats.total }}</div>
+              <div class="stat-label">Tổng số người</div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon confirmed">
+              <mat-icon>check_circle</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ stats.confirmed }}</div>
+              <div class="stat-label">Đã xác nhận</div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon present">
+              <mat-icon>how_to_reg</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ stats.present }}</div>
+              <div class="stat-label">Có mặt</div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon late">
+              <mat-icon>schedule</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ stats.late }}</div>
+              <div class="stat-label">Muộn</div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content>
+          <div class="stat-content">
+            <div class="stat-icon pending">
+              <mat-icon>pending</mat-icon>
+            </div>
+            <div class="stat-info">
+              <div class="stat-number">{{ stats.pending }}</div>
+              <div class="stat-label">Chưa điểm danh</div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Filters -->
+    <mat-card class="filters-card">
+      <mat-card-content>
+        <div class="filters-row">
+          <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Tìm kiếm</mat-label>
+            <input matInput [(ngModel)]="searchText" (ngModelChange)="onSearchChange()" 
+                   placeholder="Tên, email, vai trò...">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Trạng thái lời mời</mat-label>
+            <mat-select [(value)]="invitationFilter" (selectionChange)="onInvitationFilterChange()">
+              <mat-option *ngFor="let option of invitationOptions" [value]="option.value">
+                {{ option.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-label>Trạng thái điểm danh</mat-label>
+            <mat-select [(value)]="attendanceFilter" (selectionChange)="onAttendanceFilterChange()">
+              <mat-option *ngFor="let option of attendanceOptions" [value]="option.value">
+                {{ option.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="actions-section">
+            <button mat-raised-button color="primary" (click)="exportToCSV()">
+              <mat-icon>download</mat-icon>
+              Xuất CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="results-info">
+          <span class="results-count">
+            {{ filteredParticipants.length }} / {{ participants.length }} người tham gia
+          </span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Participants Table -->
+    <mat-card class="table-card">
+      <mat-card-content>
+        <div *ngIf="isLoading" class="loading-container">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Đang tải danh sách người tham gia...</p>
+        </div>
+
+        <div *ngIf="!isLoading && participants.length === 0" class="empty-state">
+          <mat-icon class="empty-icon">group_off</mat-icon>
+          <h3>Chưa có người tham gia</h3>
+          <p>Sự kiện này chưa có người tham gia nào.</p>
+        </div>
+
+        <div *ngIf="!isLoading && participants.length > 0 && filteredParticipants.length === 0" class="no-results">
+          <mat-icon class="no-results-icon">search_off</mat-icon>
+          <h3>Không tìm thấy người tham gia</h3>
+          <p>Không có người tham gia nào phù hợp với bộ lọc hiện tại.</p>
+          <button mat-button (click)="attendanceFilter = ''; invitationFilter = ''; searchText = ''; applyFilters()">
+            Xóa bộ lọc
+          </button>
+        </div>
+
+        <div *ngIf="!isLoading && filteredParticipants.length > 0" class="table-container">
+          <table mat-table [dataSource]="filteredParticipants" class="participants-table">
+            <!-- Name Column -->
+            <ng-container matColumnDef="fullName">
+              <th mat-header-cell *matHeaderCellDef>Họ tên</th>
+              <td mat-cell *matCellDef="let participant">
+                <div class="participant-name-cell">
+                  <div class="participant-name">{{ participant.fullName }}</div>
+                  <div class="participant-id">ID: {{ participant.userId }}</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Email Column -->
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef>Email</th>
+              <td mat-cell *matCellDef="let participant">
+                <div class="email-cell">
+                  <span>{{ participant.email }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Role Column -->
+            <ng-container matColumnDef="role">
+              <th mat-header-cell *matHeaderCellDef>Vai trò</th>
+              <td mat-cell *matCellDef="let participant">
+                <span class="role-badge">{{ participant.role }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Invitation Status Column -->
+            <ng-container matColumnDef="invitationStatus">
+              <th mat-header-cell *matHeaderCellDef>Lời mời</th>
+              <td mat-cell *matCellDef="let participant">
+                <mat-chip [color]="getInvitationStatusColor(participant.status)" selected>
+                  {{ getInvitationStatusLabel(participant.status) }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Attendance Status Column -->
+            <ng-container matColumnDef="attendanceStatus">
+              <th mat-header-cell *matHeaderCellDef>Điểm danh</th>
+              <td mat-cell *matCellDef="let participant">
+                <mat-chip [color]="getAttendanceStatusColor(participant.attendanceStatus)" selected>
+                  {{ getAttendanceStatusLabel(participant.attendanceStatus) }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Check-in Time Column -->
+            <ng-container matColumnDef="checkInTime">
+              <th mat-header-cell *matHeaderCellDef>Thời gian điểm danh</th>
+              <td mat-cell *matCellDef="let participant">
+                <div class="checkin-cell">
+                  <div class="checkin-time">{{ formatDateTime(participant.checkInTime) }}</div>
+                  <div class="checkin-method" *ngIf="participant.checkInMethod">
+                    <mat-icon>{{ participant.checkInMethod === 'QR_WIFI' ? 'wifi' : 
+                                 participant.checkInMethod === 'QR_GPS' ? 'location_on' : 'edit' }}</mat-icon>
+                    <span>{{ getCheckInMethodLabel(participant.checkInMethod) }}</span>
+                  </div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Thao tác</th>
+              <td mat-cell *matCellDef="let participant">
+                <div class="actions-cell">
+                  <button mat-icon-button [matMenuTriggerFor]="actionMenu" matTooltip="Thao tác">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #actionMenu="matMenu">
+                    <button mat-menu-item (click)="viewParticipantDetail(participant)">
+                      <mat-icon>visibility</mat-icon>
+                      <span>Xem chi tiết</span>
+                    </button>
+                    <mat-divider></mat-divider>
+                    <button mat-menu-item (click)="resendInvitation(participant)" 
+                            *ngIf="participant.status !== 'Confirmed'">
+                      <mat-icon>send</mat-icon>
+                      <span>Gửi lại lời mời</span>
+                    </button>
+                    <button mat-menu-item (click)="markAsPresent(participant)"
+                            *ngIf="participant.attendanceStatus !== 'Present'">
+                      <mat-icon>check</mat-icon>
+                      <span>Đánh dấu có mặt</span>
+                    </button>
+                    <button mat-menu-item (click)="markAsAbsent(participant)"
+                            *ngIf="participant.attendanceStatus !== 'Absent'">
+                      <mat-icon>close</mat-icon>
+                      <span>Đánh dấu vắng mặt</span>
+                    </button>
+                    <mat-divider></mat-divider>
+                    <button mat-menu-item (click)="removeParticipant(participant)" class="delete-action">
+                      <mat-icon>person_remove</mat-icon>
+                      <span>Xóa khỏi sự kiện</span>
+                    </button>
+                  </mat-menu>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                class="participant-row" 
+                [ngClass]="{ 
+                  'present': row.attendanceStatus === 'Present',
+                  'late': row.attendanceStatus === 'Late',
+                  'absent': row.attendanceStatus === 'Absent'
+                }"
+                (click)="viewParticipantDetail(row)"></tr>
+          </table>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

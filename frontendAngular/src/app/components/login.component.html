@@ -1,0 +1,62 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>qr_code_scanner</mat-icon>
+        App Điểm Danh
+      </mat-card-title>
+      <mat-card-subtitle>Đăng nhập để tiếp tục</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tên đăng nhập hoặc Email</mat-label>
+          <input matInput formControlName="username" required>
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+            Vui lòng nhập tên đăng nhập
+          </mat-error>
+        </mat-form-field>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mật khẩu</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" required>
+          <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" type="button">
+            <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+            Vui lòng nhập mật khẩu
+          </mat-error>
+        </mat-form-field>
+        
+        <button mat-raised-button color="primary" type="submit" 
+                [disabled]="loginForm.invalid || isLoading" class="full-width login-button">
+          <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+          <span *ngIf="!isLoading">Đăng nhập</span>
+        </button>
+      </form>
+    </mat-card-content>
+    
+    <mat-card-actions>
+      <div class="register-link">
+        <p>Chưa có tài khoản? 
+          <button mat-button color="primary" (click)="goToRegister()">
+            Đăng ký ngay
+          </button>
+        </p>
+      </div>
+      
+      <div class="demo-accounts">
+        <p><strong>Tài khoản demo:</strong></p>
+        <p>Admin: admin&#64;appdiemdan.com / Admin123!</p>
+        <p>User: user1&#64;test.com / password</p>
+        
+        <!-- Debug info -->
+        <div class="debug-section">
+          <small>Sử dụng backend API: {{ apiUrl }}</small>
+        </div>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>

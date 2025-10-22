@@ -1,0 +1,258 @@
+.qr-scanner-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.scanner-card {
+  max-width: 600px;
+  width: 100%;
+}
+
+.scanner-section {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.start-section {
+  text-align: center;
+  padding: 40px;
+}
+
+.camera-icon {
+  font-size: 80px;
+  width: 80px;
+  height: 80px;
+  color: #1976d2;
+  margin-bottom: 20px;
+}
+
+.start-section h3 {
+  margin: 16px 0 8px 0;
+  color: #333;
+  font-weight: 500;
+}
+
+.start-section p {
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.camera-section {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+.camera-video {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.camera-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  border-radius: 12px;
+}
+
+.scan-frame {
+  width: 200px;
+  height: 200px;
+  border: 3px solid #fff;
+  border-radius: 16px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+  position: relative;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.scan-frame::before,
+.scan-frame::after {
+  content: '';
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  border: 4px solid #4caf50;
+}
+
+.scan-frame::before {
+  top: -4px;
+  left: -4px;
+  border-right: none;
+  border-bottom: none;
+  border-top-left-radius: 16px;
+}
+
+.scan-frame::after {
+  bottom: -4px;
+  right: -4px;
+  border-left: none;
+  border-top: none;
+  border-bottom-right-radius: 16px;
+}
+
+.scan-instruction {
+  color: #fff;
+  margin-top: 24px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.camera-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.processing-section {
+  text-align: center;
+  padding: 40px;
+}
+
+.processing-section h3 {
+  margin: 20px 0 8px 0;
+  color: #333;
+}
+
+.processing-section p {
+  color: #666;
+  font-style: italic;
+}
+
+.location-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.scan-result {
+  margin-top: 20px;
+}
+
+.success-card {
+  border-left: 6px solid #4caf50;
+  background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+}
+
+.error-card {
+  border-left: 6px solid #f44336;
+  background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.result-header mat-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+}
+
+.success-card .result-header mat-icon {
+  color: #4caf50;
+}
+
+.error-card .result-header mat-icon {
+  color: #f44336;
+}
+
+.result-header h3 {
+  margin: 0;
+  font-weight: 500;
+}
+
+.event-info {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.event-info p {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.result-actions {
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .scanner-card {
+    margin: 0 8px;
+  }
+  
+  .camera-video {
+    height: 250px;
+  }
+  
+  .scan-frame {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .camera-controls {
+    flex-direction: column;
+  }
+  
+  .camera-controls button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .start-section {
+    padding: 20px;
+  }
+  
+  .camera-icon {
+    font-size: 60px;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .processing-section {
+    padding: 20px;
+  }
+  
+  .scan-frame {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .scan-instruction {
+    font-size: 14px;
+  }
+}

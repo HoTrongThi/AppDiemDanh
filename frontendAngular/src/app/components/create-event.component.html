@@ -1,0 +1,212 @@
+<div class="create-event-container">
+  <!-- Header -->
+  <mat-toolbar color="primary">
+    <button mat-icon-button (click)="goBack()" matTooltip="Quay lại">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <span class="title">Tạo sự kiện mới</span>
+  </mat-toolbar>
+
+  <div class="form-container">
+    <mat-card class="event-form-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>event</mat-icon>
+          Thông tin sự kiện
+        </mat-card-title>
+        <mat-card-subtitle>
+          Điền đầy đủ thông tin để tạo sự kiện điểm danh
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="event-form">
+          <!-- Basic Information -->
+          <div class="form-section">
+            <h3 class="section-title">
+              <mat-icon>info</mat-icon>
+              Thông tin cơ bản
+            </h3>
+            
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Tên sự kiện</mat-label>
+                <input matInput formControlName="name" placeholder="Nhập tên sự kiện">
+                <mat-error>{{ getErrorMessage('name') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Mô tả</mat-label>
+                <textarea matInput formControlName="description" rows="3" 
+                         placeholder="Mô tả chi tiết về sự kiện (tùy chọn)"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Location Information -->
+          <div class="form-section">
+            <h3 class="section-title">
+              <mat-icon>location_on</mat-icon>
+              Thông tin địa điểm
+            </h3>
+            
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Tên địa điểm</mat-label>
+                <input matInput formControlName="locationName" 
+                       placeholder="Ví dụ: Phòng họp A - Tầng 3">
+                <mat-error>{{ getErrorMessage('locationName') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Vĩ độ (Latitude)</mat-label>
+                <input matInput formControlName="latitude" type="number" step="0.000001"
+                       placeholder="Ví dụ: 10.7769">
+                <mat-error>{{ getErrorMessage('latitude') }}</mat-error>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Kinh độ (Longitude)</mat-label>
+                <input matInput formControlName="longitude" type="number" step="0.000001"
+                       placeholder="Ví dụ: 106.7009">
+                <mat-error>{{ getErrorMessage('longitude') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Bán kính cho phép (mét)</mat-label>
+                <input matInput formControlName="radiusMeters" type="number" min="10" max="10000">
+                <mat-hint>Khoảng cách tối đa để có thể điểm danh</mat-hint>
+                <mat-error>{{ getErrorMessage('radiusMeters') }}</mat-error>
+              </mat-form-field>
+              
+              <div class="location-actions">
+                <button mat-raised-button type="button" color="accent" 
+                        (click)="getCurrentLocation()" class="location-button">
+                  <mat-icon>my_location</mat-icon>
+                  Lấy vị trí hiện tại
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Time Information -->
+          <div class="form-section">
+            <h3 class="section-title">
+              <mat-icon>schedule</mat-icon>
+              Thời gian
+            </h3>
+            
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Ngày bắt đầu</mat-label>
+                <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" 
+                       [min]="minDate">
+                <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #startDatePicker></mat-datepicker>
+                <mat-error>{{ getErrorMessage('startDate') }}</mat-error>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Giờ bắt đầu</mat-label>
+                <input matInput formControlName="startTime" type="time">
+                <mat-error>{{ getErrorMessage('startTime') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Ngày kết thúc</mat-label>
+                <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" 
+                       [min]="minDate">
+                <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #endDatePicker></mat-datepicker>
+                <mat-error>{{ getErrorMessage('endDate') }}</mat-error>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Giờ kết thúc</mat-label>
+                <input matInput formControlName="endTime" type="time">
+                <mat-error>{{ getErrorMessage('endTime') }}</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Advanced Settings -->
+          <div class="form-section">
+            <h3 class="section-title">
+              <mat-icon>settings</mat-icon>
+              Cài đặt nâng cao
+            </h3>
+            
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Số người tham gia tối đa</mat-label>
+                <input matInput formControlName="maxParticipants" type="number" min="1"
+                       placeholder="Để trống nếu không giới hạn">
+                <mat-hint>Tùy chọn: giới hạn số lượng người tham gia</mat-hint>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Thời gian làm mới QR (giây)</mat-label>
+                <input matInput formControlName="qrRefreshIntervalSeconds" type="number" 
+                       min="10" max="3600">
+                <mat-hint>Tần suất tạo mã QR mới (10-3600 giây)</mat-hint>
+                <mat-error>{{ getErrorMessage('qrRefreshIntervalSeconds') }}</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <div class="checkbox-group">
+                <mat-checkbox formControlName="requireGps">
+                  Yêu cầu định vị GPS
+                </mat-checkbox>
+                <span class="checkbox-hint">
+                  Bắt buộc người dùng bật GPS để điểm danh
+                </span>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="checkbox-group">
+                <mat-checkbox formControlName="allowLateCheckin">
+                  Cho phép điểm danh muộn
+                </mat-checkbox>
+                <span class="checkbox-hint">
+                  Cho phép điểm danh sau thời gian bắt đầu
+                </span>
+              </div>
+            </div>
+
+            <div class="form-row" *ngIf="eventForm.get('allowLateCheckin')?.value">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Thời gian cho phép muộn (phút)</mat-label>
+                <input matInput formControlName="lateCheckinMinutes" type="number" 
+                       min="1" max="1440">
+                <mat-hint>Số phút được phép điểm danh muộn</mat-hint>
+              </mat-form-field>
+            </div>
+          </div>
+        </form>
+      </mat-card-content>
+
+      <mat-card-actions class="form-actions">
+        <button mat-button type="button" (click)="goBack()" [disabled]="isLoading">
+          <mat-icon>cancel</mat-icon>
+          Hủy
+        </button>
+        <button mat-raised-button color="primary" (click)="onSubmit()" 
+                [disabled]="isLoading || !eventForm.valid">
+          <mat-spinner diameter="20" *ngIf="isLoading"></mat-spinner>
+          <mat-icon *ngIf="!isLoading">save</mat-icon>
+          {{ isLoading ? 'Đang tạo...' : 'Tạo sự kiện' }}
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
