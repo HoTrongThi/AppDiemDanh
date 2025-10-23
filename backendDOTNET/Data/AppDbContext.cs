@@ -22,6 +22,8 @@ namespace backendDOTNET.Data
         public DbSet<RateLimit> RateLimits { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<SystemSetting> SystemSettings { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
+        public DbSet<UserOrganization> UserOrganizations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -39,6 +41,8 @@ namespace backendDOTNET.Data
             modelBuilder.Entity<RateLimit>().ToTable("rate_limits");
             modelBuilder.Entity<AuditLog>().ToTable("audit_logs");
             modelBuilder.Entity<SystemSetting>().ToTable("system_settings");
+            modelBuilder.Entity<Organization>().ToTable("organizations");
+            modelBuilder.Entity<UserOrganization>().ToTable("user_organizations");
 
             // Configure column names to match PostgreSQL snake_case convention
             ConfigureColumnNames(modelBuilder);

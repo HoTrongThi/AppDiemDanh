@@ -1,0 +1,183 @@
+.admin-users-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header Card */
+.header-card {
+  margin-bottom: 24px;
+}
+
+.header-card mat-card-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+}
+
+.header-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  margin: 0;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Filters Card */
+.filters-card {
+  margin-bottom: 24px;
+}
+
+.filters-container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  flex: 1;
+  min-width: 250px;
+}
+
+.filter-field {
+  min-width: 180px;
+}
+
+/* Table Card */
+.table-card {
+  overflow: hidden;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 80px;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  opacity: 0.5;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.users-table {
+  width: 100%;
+}
+
+.users-table th {
+  font-weight: 600;
+  background-color: #f5f5f5;
+}
+
+.users-table td,
+.users-table th {
+  padding: 12px 16px;
+}
+
+/* Chips */
+.role-chip {
+  font-size: 12px;
+  min-height: 24px;
+  padding: 4px 12px;
+}
+
+.role-admin {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.role-manager {
+  background-color: #2196f3 !important;
+  color: white !important;
+}
+
+.role-user {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.status-active {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.status-inactive {
+  background-color: #9e9e9e !important;
+  color: white !important;
+}
+
+.verified-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #4caf50;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+/* Action Buttons */
+.actions-cell {
+  white-space: nowrap;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.action-buttons button {
+  flex-shrink: 0;
+}
+
+.action-buttons mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-users-container {
+    padding: 16px;
+  }
+
+  .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-field,
+  .filter-field {
+    width: 100%;
+  }
+
+  .users-table {
+    font-size: 14px;
+  }
+
+  .users-table td,
+  .users-table th {
+    padding: 8px;
+  }
+}

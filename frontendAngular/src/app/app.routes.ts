@@ -7,6 +7,7 @@ import { CreateEventComponent } from './components/create-event.component';
 import { ManagerEventsComponent } from './components/manager-events.component';
 import { ManagerQrDisplayComponent } from './components/manager-qr-display.component';
 import { ManagerProfileComponent } from './components/manager-profile.component';
+import { AdminDashboardComponent } from './components/admin-dashboard.component';
 import { EventParticipantsComponent } from './components/event-participants.component';
 import { AttendanceHistoryComponent } from './components/attendance-history.component';
 import { DebugComponent } from './components/debug.component';
@@ -96,13 +97,49 @@ export const routes: Routes = [
     component: DebugComponent
   },
   
-  // Admin Routes (placeholder for future)
-  // {
-  //   path: 'admin',
-  //   component: AdminDashboardComponent,
-  //   canActivate: [authGuard, RoleGuard],
-  //   data: { roles: ['Admin'] }
-  // },
+  // Admin Routes
+  {
+    path: 'admin',
+    component: AdminDashboardComponent,
+    canActivate: [authGuard, RoleGuard],
+    data: { roles: ['Admin'] }
+  },
+  {
+    path: 'admin/users',
+    loadComponent: () => import('./components/admin-users.component').then(m => m.AdminUsersComponent),
+    canActivate: [authGuard, RoleGuard],
+    data: { roles: ['Admin'] }
+  },
+  {
+    path: 'admin/organizations',
+    loadComponent: () => import('./components/admin-organizations.component').then(m => m.AdminOrganizationsComponent),
+    canActivate: [authGuard, RoleGuard],
+    data: { roles: ['Admin'] }
+  },
+  {
+    path: 'admin/events',
+    loadComponent: () => import('./components/admin-events.component').then(m => m.AdminEventsComponent),
+    canActivate: [authGuard, RoleGuard],
+    data: { roles: ['Admin'] }
+  },
+  {
+    path: 'admin/attendance',
+    loadComponent: () => import('./components/admin-attendance.component').then(m => m.AdminAttendanceComponent),
+    canActivate: [authGuard, RoleGuard],
+    data: { roles: ['Admin'] }
+  },
+  {
+    path: 'admin/stats',
+    loadComponent: () => import('./components/admin-stats.component').then(m => m.AdminStatsComponent),
+    canActivate: [authGuard, RoleGuard],
+    data: { roles: ['Admin'] }
+  },
+  {
+    path: 'admin/profile',
+    component: ManagerProfileComponent, // Reuse manager profile component
+    canActivate: [authGuard, RoleGuard],
+    data: { roles: ['Admin'] }
+  },
   
   { path: '**', redirectTo: '/login' }
 ];

@@ -1,0 +1,157 @@
+<div class="admin-dashboard">
+  <!-- Header Toolbar -->
+  <mat-toolbar color="primary" class="dashboard-header">
+    <mat-icon>admin_panel_settings</mat-icon>
+    <span class="header-title">Admin Panel</span>
+    <span class="spacer"></span>
+    <span class="user-info">
+      <mat-icon>person</mat-icon>
+      {{ getUserDisplayName() }}
+    </span>
+    <button mat-icon-button (click)="logout()" matTooltip="Đăng xuất">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </mat-toolbar>
+
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <mat-sidenav-container class="sidenav-container">
+      <mat-sidenav mode="side" opened class="sidenav">
+        <mat-nav-list>
+          <a mat-list-item (click)="goToUsers()">
+            <mat-icon matListItemIcon>people</mat-icon>
+            <span matListItemTitle>Quản lý Users</span>
+          </a>
+          <a mat-list-item (click)="goToOrganizations()">
+            <mat-icon matListItemIcon>business</mat-icon>
+            <span matListItemTitle>Quản lý Đơn vị</span>
+          </a>
+          <a mat-list-item (click)="goToEvents()">
+            <mat-icon matListItemIcon>event</mat-icon>
+            <span matListItemTitle>Quản lý Events</span>
+          </a>
+          <a mat-list-item (click)="goToAttendance()">
+            <mat-icon matListItemIcon>how_to_reg</mat-icon>
+            <span matListItemTitle>Xác thực điểm danh</span>
+          </a>
+          <a mat-list-item (click)="goToStats()">
+            <mat-icon matListItemIcon>assessment</mat-icon>
+            <span matListItemTitle>Thống kê & Báo cáo</span>
+          </a>
+          <mat-divider></mat-divider>
+          <a mat-list-item (click)="goToProfile()">
+            <mat-icon matListItemIcon>account_circle</mat-icon>
+            <span matListItemTitle>Thông tin tài khoản</span>
+          </a>
+        </mat-nav-list>
+      </mat-sidenav>
+
+      <mat-sidenav-content class="main-content">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <mat-card class="stat-card">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-icon">
+                  <mat-icon color="primary">people</mat-icon>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-number">{{ stats.totalUsers }}</div>
+                  <div class="stat-label">Tổng số Users</div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="stat-card">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-icon">
+                  <mat-icon color="accent">event</mat-icon>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-number">{{ stats.totalEvents }}</div>
+                  <div class="stat-label">Tổng số Events</div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="stat-card">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-icon">
+                  <mat-icon color="primary">business</mat-icon>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-number">{{ stats.totalOrganizations }}</div>
+                  <div class="stat-label">Đơn vị</div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <mat-card class="stat-card">
+            <mat-card-content>
+              <div class="stat-content">
+                <div class="stat-icon">
+                  <mat-icon color="warn">pending_actions</mat-icon>
+                </div>
+                <div class="stat-info">
+                  <div class="stat-number">{{ stats.pendingVerifications }}</div>
+                  <div class="stat-label">Chờ xác thực</div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Quick Actions -->
+        <mat-card class="actions-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>flash_on</mat-icon>
+              Thao tác nhanh
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="actions-grid">
+              <button mat-raised-button color="primary" (click)="goToUsers()" class="action-button">
+                <mat-icon>person_add</mat-icon>
+                Quản lý Users
+              </button>
+              <button mat-raised-button color="accent" (click)="goToOrganizations()" class="action-button">
+                <mat-icon>add_business</mat-icon>
+                Quản lý Đơn vị
+              </button>
+              <button mat-raised-button (click)="goToEvents()" class="action-button">
+                <mat-icon>event</mat-icon>
+                Xem tất cả Events
+              </button>
+              <button mat-raised-button color="warn" (click)="goToAttendance()" class="action-button">
+                <mat-icon>verified_user</mat-icon>
+                Xác thực điểm danh
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Recent Activities (Placeholder) -->
+        <mat-card class="activities-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>history</mat-icon>
+              Hoạt động gần đây
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="empty-state">
+              <mat-icon class="empty-icon">info</mat-icon>
+              <p>Chức năng đang được phát triển</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
+</div>
