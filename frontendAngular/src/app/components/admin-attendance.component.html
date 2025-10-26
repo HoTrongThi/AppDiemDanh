@@ -1,0 +1,218 @@
+<div class="admin-attendance-container">
+  <!-- Header -->
+  <mat-card class="header-card">
+    <mat-card-header>
+      <mat-card-title>
+        <button mat-icon-button (click)="goBack()" matTooltip="Quay lại">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <mat-icon>how_to_reg</mat-icon>
+        <span>Xác thực điểm danh</span>
+      </mat-card-title>
+      <div class="spacer"></div>
+      <div class="stats-badges">
+        <mat-chip class="stat-badge pending" matTooltip="Chờ xác thực">
+          <mat-icon>pending_actions</mat-icon>
+          {{ stats.total }}
+        </mat-chip>
+        <mat-chip class="stat-badge wifi" matTooltip="Wi-Fi">
+          <mat-icon>wifi</mat-icon>
+          {{ stats.wifi }}
+        </mat-chip>
+        <mat-chip class="stat-badge gps" matTooltip="GPS">
+          <mat-icon>location_on</mat-icon>
+          {{ stats.gps }}
+        </mat-chip>
+        <mat-chip class="stat-badge manual" matTooltip="Thủ công">
+          <mat-icon>edit</mat-icon>
+          {{ stats.manual }}
+        </mat-chip>
+      </div>
+    </mat-card-header>
+  </mat-card>
+
+  <!-- Filters -->
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <div class="filters-container">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Tìm kiếm</mat-label>
+          <input matInput 
+                 [(ngModel)]="searchQuery" 
+                 (keyup.enter)="applyFilters()"
+                 placeholder="Tên người dùng, email...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Trạng thái</mat-label>
+          <mat-select [(ngModel)]="statusFilter" (selectionChange)="applyFilters()">
+            <mat-option value="">Tất cả</mat-option>
+            <mat-option value="PendingVerification">Chờ xác thực</mat-option>
+            <mat-option value="Present">Có mặt</mat-option>
+            <mat-option value="Late">Muộn</mat-option>
+            <mat-option value="Absent">Vắng</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Phương thức</mat-label>
+          <mat-select [(ngModel)]="checkInMethodFilter" (selectionChange)="applyFilters()">
+            <mat-option value="">Tất cả</mat-option>
+            <mat-option value="WiFi">Wi-Fi</mat-option>
+            <mat-option value="GPS">GPS</mat-option>
+            <mat-option value="Manual">Thủ công</mat-option>
+            <mat-option value="Admin">Admin</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Sự kiện</mat-label>
+          <mat-select [(ngModel)]="selectedEventId" (selectionChange)="applyFilters()">
+            <mat-option value="">Tất cả sự kiện</mat-option>
+            <mat-option *ngFor="let event of events" [value]="event.id">
+              {{ event.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button (click)="applyFilters()">
+          <mat-icon>search</mat-icon>
+          Tìm kiếm
+        </button>
+
+        <button mat-stroked-button (click)="clearFilters()">
+          <mat-icon>clear</mat-icon>
+          Xóa bộ lọc
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Data Table -->
+  <mat-card class="table-card">
+    <mat-card-content>
+      <div *ngIf="loading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Đang tải dữ liệu...</p>
+      </div>
+
+      <div *ngIf="!loading && pendingRecords.length === 0" class="empty-state">
+        <mat-icon class="empty-icon">inbox</mat-icon>
+        <h3>Không có bản ghi điểm danh nào</h3>
+        <p>Thử thay đổi bộ lọc hoặc chọn sự kiện khác</p>
+      </div>
+
+      <div *ngIf="!loading && pendingRecords.length > 0" class="table-container">
+        <table mat-table [dataSource]="pendingRecords" class="attendance-table">
+          <!-- User Name Column -->
+          <ng-container matColumnDef="userName">
+            <th mat-header-cell *matHeaderCellDef>Người dùng</th>
+            <td mat-cell *matCellDef="let record">
+              <div class="user-info">
+                <strong>{{ record.userName }}</strong>
+                <small>{{ record.userEmail }}</small>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Event Name Column -->
+          <ng-container matColumnDef="eventName">
+            <th mat-header-cell *matHeaderCellDef>Sự kiện</th>
+            <td mat-cell *matCellDef="let record">{{ record.eventName }}</td>
+          </ng-container>
+
+          <!-- Check-in Method Column -->
+          <ng-container matColumnDef="checkInMethod">
+            <th mat-header-cell *matHeaderCellDef>Phương thức</th>
+            <td mat-cell *matCellDef="let record">
+              <mat-chip [class]="'method-chip method-' + record.checkInMethod.toLowerCase()">
+                <mat-icon>{{ getMethodIcon(record.checkInMethod) }}</mat-icon>
+                {{ record.checkInMethod }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Timestamp Column -->
+          <ng-container matColumnDef="timestamp">
+            <th mat-header-cell *matHeaderCellDef>Thời gian</th>
+            <td mat-cell *matCellDef="let record">
+              <small>{{ formatTimestamp(record.timestamp) }}</small>
+            </td>
+          </ng-container>
+
+          <!-- GPS Info Column -->
+          <ng-container matColumnDef="gpsInfo">
+            <th mat-header-cell *matHeaderCellDef>GPS</th>
+            <td mat-cell *matCellDef="let record">
+              <div *ngIf="record.gpsLatitude && record.gpsLongitude" class="gps-info">
+                <button mat-icon-button 
+                        (click)="viewOnMap(record)" 
+                        matTooltip="Xem trên bản đồ"
+                        color="primary">
+                  <mat-icon>map</mat-icon>
+                </button>
+                <small>±{{ record.gpsAccuracyMeters }}m</small>
+              </div>
+              <span *ngIf="!record.gpsLatitude" class="text-muted">-</span>
+            </td>
+          </ng-container>
+
+          <!-- Status Column -->
+          <ng-container matColumnDef="status">
+            <th mat-header-cell *matHeaderCellDef>Trạng thái</th>
+            <td mat-cell *matCellDef="let record">
+              <mat-chip [class]="'status-chip status-' + record.status.toLowerCase()">
+                {{ getStatusLabel(record.status) }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Thao tác</th>
+            <td mat-cell *matCellDef="let record" class="actions-cell">
+              <div class="action-buttons">
+                <button mat-icon-button 
+                        (click)="viewDetails(record)" 
+                        matTooltip="Xem chi tiết"
+                        color="primary">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                
+                <button mat-icon-button 
+                        *ngIf="record.status === 'PendingVerification'"
+                        (click)="verifyAttendance(record, 'Present')" 
+                        matTooltip="Chấp nhận"
+                        color="primary">
+                  <mat-icon>check_circle</mat-icon>
+                </button>
+                
+                <button mat-icon-button 
+                        *ngIf="record.status === 'PendingVerification'"
+                        (click)="verifyAttendance(record, 'Absent')" 
+                        matTooltip="Từ chối"
+                        color="warn">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <!-- Paginator -->
+        <mat-paginator 
+          [length]="totalRecords"
+          [pageSize]="pageSize"
+          [pageSizeOptions]="[5, 10, 25, 50]"
+          [pageIndex]="currentPage - 1"
+          (page)="onPageChange($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

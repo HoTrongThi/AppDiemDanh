@@ -276,4 +276,117 @@ export class AdminService {
   getEventAttendance(id: string): Observable<any> {
     return this.http.get<any>(`${this.API_URL}/admin/events/${id}/attendance`);
   }
+
+  // Attendance Verification Management
+  getPendingAttendance(
+    page: number = 1,
+    pageSize: number = 10,
+    status?: string,
+    checkInMethod?: string,
+    search?: string,
+    eventId?: string
+  ): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+    
+    if (status) params = params.set('status', status);
+    if (checkInMethod) params = params.set('checkInMethod', checkInMethod);
+    if (search) params = params.set('search', search);
+    if (eventId) params = params.set('eventId', eventId);
+    
+    return this.http.get<any>(`${this.API_URL}/admin/attendance/pending`, { params });
+  }
+
+  getAttendanceStats(): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/admin/attendance/stats`);
+  }
+
+  verifyAttendance(attendanceId: string, status: string, notes?: string): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/attendance/${attendanceId}/verify`, {
+      status,
+      notes
+    });
+  }
+
+  bulkVerifyAttendance(attendanceIds: string[], status: string, notes?: string): Observable<any> {
+    return this.http.post<any>(`${this.API_URL}/admin/attendance/bulk-verify`, {
+      attendanceIds,
+      status,
+      notes
+    });
+  }
+
+  getAttendanceDetails(attendanceId: string): Observable<any> {
+    return this.http.get<any>(`${this.API_URL}/admin/attendance/${attendanceId}`);
+  }
+
+  getVerificationHistory(
+    page: number = 1,
+    pageSize: number = 20,
+    startDate?: string,
+    endDate?: string
+  ): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+    
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+    
+    return this.http.get<any>(`${this.API_URL}/admin/attendance/verification-history`, { params });
+  }
+
+  // Reports & Statistics
+  getOverviewStats(startDate?: string, endDate?: string): Observable<any> {
+    let params = new HttpParams();
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+    return this.http.get<any>(`${this.API_URL}/admin/reports/overview`, { params });
+  }
+
+  getAttendanceTrends(startDate?: string, endDate?: string, groupBy: string = 'day'): Observable<any> {
+    let params = new HttpParams().set('groupBy', groupBy);
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+    return this.http.get<any>(`${this.API_URL}/admin/reports/attendance-trends`, { params });
+  }
+
+  getStatsByOrganization(startDate?: string, endDate?: string): Observable<any> {
+    let params = new HttpParams();
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+    return this.http.get<any>(`${this.API_URL}/admin/reports/by-organization`, { params });
+  }
+
+  getStatsByEvent(startDate?: string, endDate?: string, status?: string): Observable<any> {
+    let params = new HttpParams();
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+    if (status) params = params.set('status', status);
+    return this.http.get<any>(`${this.API_URL}/admin/reports/by-event`, { params });
+  }
+
+  getTopPerformers(startDate?: string, endDate?: string, limit: number = 10): Observable<any> {
+    let params = new HttpParams().set('limit', limit.toString());
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+    return this.http.get<any>(`${this.API_URL}/admin/reports/top-performers`, { params });
+  }
+
+  getPoorAttendance(startDate?: string, endDate?: string, limit: number = 10, threshold: number = 50): Observable<any> {
+    let params = new HttpParams()
+      .set('limit', limit.toString())
+      .set('threshold', threshold.toString());
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+    return this.http.get<any>(`${this.API_URL}/admin/reports/poor-attendance`, { params });
+  }
+
+  getExportData(reportType: string = 'overview', startDate?: string, endDate?: string): Observable<any> {
+    let params = new HttpParams().set('reportType', reportType);
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
+    return this.http.get<any>(`${this.API_URL}/admin/reports/export-data`, { params });
+  }
 }

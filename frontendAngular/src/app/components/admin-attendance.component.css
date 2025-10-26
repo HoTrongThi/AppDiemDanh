@@ -1,0 +1,345 @@
+.admin-attendance-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header Card */
+.header-card {
+  margin-bottom: 24px;
+}
+
+.header-card mat-card-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+}
+
+.header-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  margin: 0;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* Stats Badges */
+.stats-badges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.stat-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  min-height: 28px;
+  padding: 4px 12px;
+  font-weight: 500;
+}
+
+.stat-badge mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.stat-badge.pending {
+  background-color: #ff9800 !important;
+  color: white !important;
+}
+
+.stat-badge.wifi {
+  background-color: #2196f3 !important;
+  color: white !important;
+}
+
+.stat-badge.gps {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.stat-badge.manual {
+  background-color: #9c27b0 !important;
+  color: white !important;
+}
+
+/* Filters Card */
+.filters-card {
+  margin-bottom: 24px;
+}
+
+.filters-container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  flex: 1;
+  min-width: 250px;
+}
+
+.filter-field {
+  min-width: 180px;
+}
+
+/* Table Card */
+.table-card {
+  overflow: hidden;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 80px;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  opacity: 0.5;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.attendance-table {
+  width: 100%;
+}
+
+.attendance-table th {
+  font-weight: 600;
+  background-color: #f5f5f5;
+}
+
+.attendance-table td,
+.attendance-table th {
+  padding: 12px 16px;
+}
+
+/* User Info */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-info strong {
+  color: #333;
+  font-size: 14px;
+}
+
+.user-info small {
+  color: #666;
+  font-size: 12px;
+}
+
+/* Method Chips */
+.method-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  min-height: 24px;
+  padding: 4px 12px;
+}
+
+.method-chip mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.method-wifi {
+  background-color: #2196f3 !important;
+  color: white !important;
+}
+
+.method-gps {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.method-manual {
+  background-color: #9c27b0 !important;
+  color: white !important;
+}
+
+.method-admin {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+/* Status Chips */
+.status-chip {
+  font-size: 12px;
+  min-height: 24px;
+  padding: 4px 12px;
+}
+
+.status-present {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.status-late {
+  background-color: #ff9800 !important;
+  color: white !important;
+}
+
+.status-absent {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.status-pendingverification {
+  background-color: #ff9800 !important;
+  color: white !important;
+}
+
+/* GPS Info */
+.gps-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gps-info small {
+  color: #666;
+  font-size: 12px;
+}
+
+.text-muted {
+  color: #999;
+}
+
+/* Action Buttons */
+.actions-cell {
+  white-space: nowrap;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.action-buttons button {
+  flex-shrink: 0;
+}
+
+.action-buttons mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-attendance-container {
+    padding: 16px;
+  }
+
+  .header-card mat-card-title {
+    font-size: 20px;
+  }
+
+  .stats-badges {
+    flex-wrap: wrap;
+  }
+
+  .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-field,
+  .filter-field {
+    width: 100%;
+  }
+
+  .attendance-table {
+    font-size: 14px;
+  }
+
+  .attendance-table td,
+  .attendance-table th {
+    padding: 8px;
+  }
+}
+
+/* Dialog Styles */
+::ng-deep .mat-mdc-dialog-container {
+  padding: 0 !important;
+}
+
+::ng-deep .mat-mdc-dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  margin: 0;
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+::ng-deep .mat-mdc-dialog-content {
+  padding: 24px !important;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+::ng-deep .mat-mdc-dialog-actions {
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+  margin: 0;
+}
+
+/* Detail Section Styles (for dialog) */
+.detail-section {
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.detail-section:last-child {
+  border-bottom: none;
+}
+
+.detail-section h3 {
+  margin-top: 0;
+  color: #1976d2;
+  font-size: 16px;
+}
+
+.detail-section p {
+  margin: 8px 0;
+}
+
+pre {
+  background: #f5f5f5;
+  padding: 12px;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 12px;
+}

@@ -1,0 +1,487 @@
+.admin-stats-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Header Card */
+.header-card {
+  margin-bottom: 24px;
+}
+
+.header-card mat-card-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+}
+
+.header-card mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  margin: 0;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Filters Card */
+.filters-card {
+  margin-bottom: 24px;
+}
+
+.date-filter {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.date-filter mat-form-field {
+  min-width: 200px;
+}
+
+/* Tabs */
+.stats-tabs {
+  margin-bottom: 24px;
+}
+
+.tab-content {
+  padding: 24px 0;
+}
+
+/* Loading & Empty States */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 16px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 80px;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  opacity: 0.5;
+}
+
+/* Overview Content */
+.overview-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Summary Grid */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.summary-card mat-card-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px !important;
+}
+
+.summary-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+}
+
+.summary-icon mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  color: white;
+}
+
+.summary-icon.users {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.summary-icon.events {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.summary-icon.organizations {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.summary-icon.attendance {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.summary-info h3 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 600;
+  color: #333;
+}
+
+.summary-info p {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.summary-info small {
+  font-size: 12px;
+  color: #999;
+}
+
+/* Stats Card */
+.stats-card {
+  margin-bottom: 24px;
+}
+
+.stats-card mat-card-header {
+  padding: 16px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.stats-card mat-card-title {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* Attendance Stats */
+.attendance-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 16px;
+  border-radius: 8px;
+  background: #f5f5f5;
+}
+
+.stat-item.success {
+  background: #e8f5e9;
+  border-left: 4px solid #4caf50;
+}
+
+.stat-item.warning {
+  background: #fff3e0;
+  border-left: 4px solid #ff9800;
+}
+
+.stat-item.danger {
+  background: #ffebee;
+  border-left: 4px solid #f44336;
+}
+
+.stat-item.pending {
+  background: #fff3e0;
+  border-left: 4px solid #ff9800;
+}
+
+.stat-item.rate {
+  background: #e3f2fd;
+  border-left: 4px solid #2196f3;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Methods Stats */
+.methods-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 20px;
+}
+
+.method-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 8px;
+  background: #f5f5f5;
+}
+
+.method-item mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.method-item.wifi {
+  background: #e3f2fd;
+  border-left: 4px solid #2196f3;
+}
+
+.method-item.wifi mat-icon {
+  color: #2196f3;
+}
+
+.method-item.gps {
+  background: #e8f5e9;
+  border-left: 4px solid #4caf50;
+}
+
+.method-item.gps mat-icon {
+  color: #4caf50;
+}
+
+.method-item.manual {
+  background: #f3e5f5;
+  border-left: 4px solid #9c27b0;
+}
+
+.method-item.manual mat-icon {
+  color: #9c27b0;
+}
+
+.method-item.admin {
+  background: #ffebee;
+  border-left: 4px solid #f44336;
+}
+
+.method-item.admin mat-icon {
+  color: #f44336;
+}
+
+.method-info {
+  flex: 1;
+}
+
+.method-label {
+  font-size: 12px;
+  color: #666;
+}
+
+.method-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Table Card */
+.table-card {
+  overflow: hidden;
+}
+
+.table-card mat-card-header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.stats-table {
+  width: 100%;
+}
+
+.stats-table th {
+  font-weight: 600;
+  background-color: #f5f5f5;
+}
+
+.stats-table td,
+.stats-table th {
+  padding: 12px 16px;
+}
+
+/* Chips */
+.type-chip {
+  background-color: #2196f3 !important;
+  color: white !important;
+  font-size: 12px;
+  min-height: 24px;
+  padding: 4px 12px;
+}
+
+.rate-chip {
+  font-size: 12px;
+  min-height: 24px;
+  padding: 4px 12px;
+  font-weight: 600;
+}
+
+.rate-chip.rate-success {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.rate-chip.rate-warning {
+  background-color: #ff9800 !important;
+  color: white !important;
+}
+
+.rate-chip.rate-danger {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+/* Attendance Breakdown */
+.attendance-breakdown {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.attendance-breakdown .present {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.attendance-breakdown .late {
+  color: #ff9800;
+  font-weight: 600;
+}
+
+.attendance-breakdown .absent {
+  color: #f44336;
+  font-weight: 600;
+}
+
+/* Event Location */
+.event-location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.event-location mat-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  color: #666;
+}
+
+.event-location small {
+  color: #666;
+  font-size: 12px;
+}
+
+/* Org Code */
+.org-code small {
+  color: #666;
+  font-size: 12px;
+}
+
+/* Counts */
+.present-count {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.late-count {
+  color: #ff9800;
+  font-weight: 600;
+}
+
+.absent-count {
+  color: #f44336;
+  font-weight: 600;
+}
+
+/* Performers Table */
+.performers-table .rank-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.performers-table .rank-badge.top-3 {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+}
+
+.performers-table .rank-badge mat-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  color: #ff6f00;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-stats-container {
+    padding: 16px;
+  }
+
+  .header-card mat-card-title {
+    font-size: 20px;
+  }
+
+  .date-filter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .date-filter mat-form-field,
+  .date-filter button {
+    width: 100%;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .attendance-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .methods-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-table {
+    font-size: 14px;
+  }
+
+  .stats-table td,
+  .stats-table th {
+    padding: 8px;
+  }
+}
